@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {
     AppBar,
     Avatar,
-    Badge,
     Box,
     IconButton,
     ListItemIcon,
@@ -12,13 +11,11 @@ import {
     Toolbar,
     Typography
 } from "@mui/material";
-import {Logout, Notifications} from "@mui/icons-material";
+import {Logout} from "@mui/icons-material";
 import {useLocalState} from "../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 import MenuIcon from "@mui/icons-material/Menu";
 import {ajax} from "../util/fetchService";
-import {useQuery} from "react-query";
-import {LoadingFetch} from "./loading/LoadingFetch";
 
 const StyledToolbar = styled(Toolbar)({
     display: "flex",
@@ -62,16 +59,6 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
         setMobileOpen(!mobileOpen);
     };
 
-    async function countRecommendedPosts() {
-        return await ajax(`/api/posts/recommended/${userId}/count`, 'get', jwt);
-    }
-
-    const {data: countedPosts, status: countStatus} = useQuery('countPosts', countRecommendedPosts)
-
-    if (countStatus === "loading") {
-        return <LoadingFetch/>
-    }
-
     return (
         <AppBar position={"sticky"}>
             <StyledToolbar>
@@ -86,13 +73,6 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 </IconButton>
                 <Typography variant={"h6"} sx={{display: {xs: "none", sm: "block"}}}>Site name</Typography>
                 <Icons>
-                    <Badge badgeContent={countedPosts === 0 ? null : " "} color={"error"} onClick={(event) => {
-                        if (countedPosts !== 0) {
-                            handleNotificationClick(event)
-                        }
-                    }}>
-                        <Notifications/>
-                    </Badge>
                     <Avatar sx={{width: 30, height: 30, bgcolor: "red"}}
                             onClick={handleProfileClick}>{username[0]}</Avatar>
                 </Icons>

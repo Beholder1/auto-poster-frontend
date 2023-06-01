@@ -6,7 +6,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {Register} from "./component/Register";
 import {createTheme} from "@mui/material";
 // import {ChatPage} from "./component/chat/ChatPage";
-import {useThemeStore} from "./util/themeStore";
+import {useThemeStore} from "./util";
 // import {TeamPage} from "./component/team/TeamPage";
 // import {MyPostsPage} from "./component/post/MyPostsPage";
 // import {FriendRequestsPage} from "./component/friend/FriendRequestsPage";
@@ -16,6 +16,8 @@ import {useThemeStore} from "./util/themeStore";
 // import {RecommendedPostsPage} from "./component/post/RecommendedPostsPage";
 // import {PageNotFound} from "./component/PageNotFound";
 import {ForgotPassword} from "./component/ForgotPassword";
+import {PrivateRoute} from "./component/PrivateRoute";
+import {Homepage} from "./component/Homepage";
 // import {GamesPage} from "./component/game/GamesPage";
 // import {UsersPage} from "./component/user/UsersPage";
 // import {AdminChatPage} from "./component/chat/AdminChatPage";
@@ -45,7 +47,8 @@ function App() {
             <Route path={"/register"} element={<Register theme={darkTheme}/>}/>
             {/*<Route path={"/reset/:token"} element={<PasswordReset theme={darkTheme}/>}/>*/}
             {/*<Route path={"/register/:token"} element={<LoginRedirect theme={darkTheme}/>}/>*/}
-            {/*<Route path={"/homepage"} element={<PrivateRoute><Homepage theme={darkTheme}/></PrivateRoute>}/>*/}
+            <Route path={"/homepage"}
+                   element={<PrivateRoute theme={darkTheme}><Homepage theme={darkTheme}/></PrivateRoute>}/>
             {/*<Route path={"/my-posts"} element={<PrivateRoute><MyPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}
             {/*<Route path={"/saved-posts"} element={<PrivateRoute><SavedPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}
             {/*<Route path={"/recommended"}*/}
