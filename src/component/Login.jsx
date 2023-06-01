@@ -96,55 +96,55 @@ export function Login({theme}) {
                  color={"text.primary"}>
                 <Paper elevation={3} style={paperStyle}>
                     <Stack direction={"row"}>
-                    <Lottie animationData={sign} style={{ width: '400px' }} />
-                    <Stack sx={{width: '400px'}}>
-                        <Grid align={"center"}>
-                            <Avatar style={avatarStyle}><VpnKey/></Avatar>
-                            <h2>Sign in</h2>
-                        </Grid>
-                        <TextField
-                            required
-                            variant="outlined"
-                            label="Email"
-                            fullWidth
-                            style={textFieldStyle}
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                            onKeyDown={handleKeypress}
-                        />
-                        <TextField
-                            required
-                            variant="outlined"
-                            label="Password"
-                            fullWidth
-                            style={textFieldStyle}
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            type={"password"}
-                            onKeyDown={handleKeypress}
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    name={"checked"}
-                                    color={"primary"}
-                                    onChange={(event) => setRememberMe(event.target.value === "on" ? 1 : 0)}
-                                />
-                            } label={"Remember me"}
-                        />
-                        <Button variant="contained" fullWidth type={"submit"} style={buttonStyle}
-                                onClick={() => sendLoginRequest()}>Sign in</Button>
-                        <Typography>
-                            <Link href={"/forgot-password"}>
-                                Forgot password?
-                            </Link>
-                        </Typography>
-                        <Typography> Don't you have an account?
-                            <Link href={"/register"}>
-                                Sign up
-                            </Link>
-                        </Typography>
-                    </Stack>
+                        <Lottie animationData={sign} style={{width: '400px'}}/>
+                        <Stack sx={{width: '400px'}}>
+                            <Grid align={"center"}>
+                                <Avatar style={avatarStyle}><VpnKey/></Avatar>
+                                <h2>Sign in</h2>
+                            </Grid>
+                            <TextField
+                                required
+                                variant="outlined"
+                                label="Email"
+                                fullWidth
+                                style={textFieldStyle}
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                onKeyDown={handleKeypress}
+                            />
+                            <TextField
+                                required
+                                variant="outlined"
+                                label="Password"
+                                fullWidth
+                                style={textFieldStyle}
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                type={"password"}
+                                onKeyDown={handleKeypress}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={"checked"}
+                                        color={"primary"}
+                                        onChange={(event) => setRememberMe(event.target.value === "on" ? 1 : 0)}
+                                    />
+                                } label={"Remember me"}
+                            />
+                            <Button variant="contained" fullWidth type={"submit"} style={buttonStyle}
+                                    onClick={() => sendLoginRequest()}>Sign in</Button>
+                            <Typography>
+                                <Link href={"/forgot-password"}>
+                                    Forgot password?
+                                </Link>
+                            </Typography>
+                            <Typography> Don't you have an account?
+                                <Link href={"/register"}>
+                                    Sign up
+                                </Link>
+                            </Typography>
+                        </Stack>
                     </Stack>
                 </Paper>
                 <Stack direction="row" alignItems="center" justifyContent="center">
