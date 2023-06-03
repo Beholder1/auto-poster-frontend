@@ -18,6 +18,7 @@ import {useThemeStore} from "./util";
 import {ForgotPassword} from "./component/ForgotPassword";
 import {PrivateRoute} from "./component/PrivateRoute";
 import {Homepage} from "./component/Homepage";
+import {AccountsPage} from "./component/AccountsPage";
 // import {GamesPage} from "./component/game/GamesPage";
 // import {UsersPage} from "./component/user/UsersPage";
 // import {AdminChatPage} from "./component/chat/AdminChatPage";
@@ -49,7 +50,7 @@ function App() {
             {/*<Route path={"/register/:token"} element={<LoginRedirect theme={darkTheme}/>}/>*/}
             <Route path={"/homepage"}
                    element={<PrivateRoute theme={darkTheme}><Homepage theme={darkTheme}/></PrivateRoute>}/>
-            {/*<Route path={"/my-posts"} element={<PrivateRoute><MyPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}
+            <Route path={"/accounts"} element={<PrivateRoute theme={darkTheme}><AccountsPage theme={darkTheme}/></PrivateRoute>}/>
             {/*<Route path={"/saved-posts"} element={<PrivateRoute><SavedPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}
             {/*<Route path={"/recommended"}*/}
             {/*       element={<PrivateRoute><RecommendedPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}

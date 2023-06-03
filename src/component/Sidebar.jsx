@@ -2,20 +2,15 @@ import React from "react";
 import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch} from "@mui/material";
 import {
     Announcement,
-    Bookmark,
-    ChatBubble,
     DarkMode,
-    Dashboard,
-    GroupAdd,
     Groups,
     Home,
     LightMode,
-    People,
+    LocationOn,
     Person,
-    PersonAdd,
+    Sell,
     Settings,
-    SportsEsports,
-    Star
+    SportsEsports
 } from "@mui/icons-material";
 import {useThemeStore} from "../util";
 import Drawer from "@mui/material/Drawer";
@@ -39,11 +34,6 @@ export const Sidebar = (props) => {
         setMobileOpen(!mobileOpen);
     };
 
-    const checkActualSite = (href) => {
-        let url = new URL(window.location.href)
-        return window.location.href === url + href
-    }
-
     const drawer = (
         <List>
             <ListItem disablePadding>
@@ -51,99 +41,42 @@ export const Sidebar = (props) => {
                     <ListItemIcon>
                         <Home/>
                     </ListItemIcon>
-                    <ListItemText primary={"Homepage"}/>
+                    <ListItemText primary={"Strona główna"}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/my-posts"}>
-                    <ListItemIcon>
-                        <Dashboard/>
-                    </ListItemIcon>
-                    <ListItemText primary={"My posts"}/>
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/saved-posts"}>
-                    <ListItemIcon>
-                        <Bookmark/>
-                    </ListItemIcon>
-                    <ListItemText primary={"Saved posts"}/>
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/recommended"}>
-                    <ListItemIcon>
-                        <Star/>
-                    </ListItemIcon>
-                    <ListItemText primary={"Recommended"}/>
-                </ListItemButton>
-            </ListItem>
-            <Divider/>
-            <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/friends"}>
+                <ListItemButton component={"a"} href={"/accounts"}>
                     <ListItemIcon>
                         <Person/>
                     </ListItemIcon>
-                    <ListItemText primary={"Friends"}/>
+                    <ListItemText primary={"Konta"}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/friend-requests"}>
+                <ListItemButton component={"a"} href={"/products"}>
                     <ListItemIcon>
-                        <PersonAdd/>
+                        <Sell/>
                     </ListItemIcon>
-                    <ListItemText primary={"Friend requests"}/>
+                    <ListItemText primary={"Produkty"}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/teams"}>
+                <ListItemButton component={"a"} href={"/locations"}>
                     <ListItemIcon>
-                        <People/>
+                        <LocationOn/>
                     </ListItemIcon>
-                    <ListItemText primary={"Teams"}/>
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/team-requests"}>
-                    <ListItemIcon>
-                        <GroupAdd/>
-                    </ListItemIcon>
-                    <ListItemText primary={"Team requests"}/>
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/chat"}>
-                    <ListItemIcon>
-                        <ChatBubble/>
-                    </ListItemIcon>
-                    <ListItemText primary={"Chat"}/>
+                    <ListItemText primary={"Lokalizacje"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
             {userRole === "admin" ?
                 <>
                     <ListItem disablePadding>
-                        <ListItemButton component={"a"} href={"/add-games"}>
-                            <ListItemIcon>
-                                <SportsEsports/>
-                            </ListItemIcon>
-                            <ListItemText primary={"Add game"}/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
                         <ListItemButton component={"a"} href={"/users"}>
                             <ListItemIcon>
                                 <Groups/>
                             </ListItemIcon>
                             <ListItemText primary={"Users"}/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton component={"a"} href={"/admin-chat"}>
-                            <ListItemIcon>
-                                <Announcement/>
-                            </ListItemIcon>
-                            <ListItemText primary={"Admin chat"}/>
                         </ListItemButton>
                     </ListItem>
                     <Divider/>
@@ -154,7 +87,7 @@ export const Sidebar = (props) => {
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
-                    <ListItemText primary={"Settings"}/>
+                    <ListItemText primary={"Ustawienia"}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
