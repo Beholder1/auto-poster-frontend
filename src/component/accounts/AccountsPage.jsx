@@ -1,7 +1,7 @@
 import React from "react";
 import {Box, ThemeProvider} from "@mui/material";
-import {Navbar} from "./Navbar";
-import {Sidebar} from "./Sidebar";
+import {Navbar} from "../Navbar";
+import {Sidebar} from "../Sidebar";
 import {Helmet} from "react-helmet";
 import {Accounts} from "./Accounts";
 import {AddAccount} from "./AddAccount";

@@ -14,7 +14,7 @@ import {
     Typography
 } from "@mui/material";
 import {Add as AddIcon} from "@mui/icons-material"
-import {useLocalState} from "../util/useLocalStorage";
+import {useLocalState} from "../../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 
 const StyledModal = styled(Modal)({
@@ -23,15 +23,15 @@ const StyledModal = styled(Modal)({
     justifyContent: "center"
 })
 
-export const AddAccount = () => {
+export const AddProduct = () => {
     const [open, setOpen] = useState(false)
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
-    const [gameName, setGameName] = React.useState("");
+    const [ProductName, setProductName] = React.useState("");
     const [openAlert, setOpenAlert] = useState(false);
 
-    const addGame = async (name) => {
-        const response = await fetch("api/games?name=" + name, {
+    const addProduct = async (name) => {
+        const response = await fetch("api/products?name=" + name, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
@@ -64,19 +64,19 @@ export const AddAccount = () => {
                         <TextField
                             sx={{width: "100%"}}
                             label={"Name"}
-                            value={gameName}
-                            onChange={(event) => setGameName(event.target.value)}
+                            value={ProductName}
+                            onChange={(event) => setProductName(event.target.value)}
                         />
                     </Stack>
                     <ButtonGroup fullWidth variant="contained">
                         <Button variant="contained" fullWidth type={"submit"}
                                 onClick={async () => {
-                                    let response = await addGame(gameName);
+                                    let response = await addProduct(ProductName);
                                     if (response === "Error") {
                                         setOpenAlert(true)
                                     } else {
                                         setOpen(false);
-                                        setGameName("");
+                                        setProductName("");
                                     }
                                 }}>Add</Button>
                     </ButtonGroup>

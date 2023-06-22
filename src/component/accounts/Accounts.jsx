@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Box, List, Pagination} from "@mui/material";
-import {useLocalState} from "../util/useLocalStorage";
-import {ajax} from "../util/fetchService";
+import {useLocalState} from "../../util/useLocalStorage";
+import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
-import {LoadingFetch} from "./LoadingFetch";
+import {LoadingFetch} from "../LoadingFetch";
 import jwt_decode from "jwt-decode";
 import TextField from "@mui/material/TextField";
 import {Account} from "./Account";

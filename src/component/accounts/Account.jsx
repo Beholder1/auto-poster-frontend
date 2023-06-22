@@ -14,7 +14,7 @@ import {
     Typography
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
-import {useLocalState} from "../util/useLocalStorage";
+import {useLocalState} from "../../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
