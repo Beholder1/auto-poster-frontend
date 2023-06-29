@@ -1,17 +1,7 @@
 import React from "react";
+import {useTranslation} from 'react-i18next';
 import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch} from "@mui/material";
-import {
-    Announcement,
-    DarkMode,
-    Groups,
-    Home,
-    LightMode,
-    LocationOn,
-    Person,
-    Sell,
-    Settings,
-    SportsEsports
-} from "@mui/icons-material";
+import {DarkMode, Groups, Home, LightMode, LocationOn, Person, Sell, Settings} from "@mui/icons-material";
 import {useThemeStore} from "../util";
 import Drawer from "@mui/material/Drawer";
 import jwt_decode from "jwt-decode";
@@ -22,7 +12,7 @@ const drawerWidth = 240;
 export const Sidebar = (props) => {
     const {mobileOpen} = props;
     const {setMobileOpen} = props;
-
+    const {t} = useTranslation();
     const mode = useThemeStore(state => state.mode);
     const setMode = useThemeStore(state => state.setMode);
     const [selectedIndex, setSelectedIndex] = React.useState(1);

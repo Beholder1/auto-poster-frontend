@@ -52,9 +52,12 @@ function App() {
             {/*<Route path={"/register/:token"} element={<LoginRedirect theme={darkTheme}/>}/>*/}
             <Route path={"/homepage"}
                    element={<PrivateRoute theme={darkTheme}><Homepage theme={darkTheme}/></PrivateRoute>}/>
-            <Route path={"/accounts"} element={<PrivateRoute theme={darkTheme}><AccountsPage theme={darkTheme}/></PrivateRoute>}/>
-            <Route path={"/locations"} element={<PrivateRoute theme={darkTheme}><LocationsPage theme={darkTheme}/></PrivateRoute>}/>
-            <Route path={"/products"} element={<PrivateRoute theme={darkTheme}><ProductsPage theme={darkTheme}/></PrivateRoute>}/>
+            <Route path={"/accounts"}
+                   element={<PrivateRoute theme={darkTheme}><AccountsPage theme={darkTheme}/></PrivateRoute>}/>
+            <Route path={"/locations"}
+                   element={<PrivateRoute theme={darkTheme}><LocationsPage theme={darkTheme}/></PrivateRoute>}/>
+            <Route path={"/products"}
+                   element={<PrivateRoute theme={darkTheme}><ProductsPage theme={darkTheme}/></PrivateRoute>}/>
             {/*<Route path={"/saved-posts"} element={<PrivateRoute><SavedPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}
             {/*<Route path={"/recommended"}*/}
             {/*       element={<PrivateRoute><RecommendedPostsPage theme={darkTheme}/></PrivateRoute>}/>*/}

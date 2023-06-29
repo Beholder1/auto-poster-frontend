@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Box, ThemeProvider} from "@mui/material";
 import {Helmet} from "react-helmet";
 import {Navbar} from "../Navbar";
@@ -10,6 +10,7 @@ import {Locations} from "./Locations";
 export const LocationsPage = ({theme}) => {
     // const theme = useThemeStore(state => state.theme);
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [change, setChange] = useState(false)
 
     return (
         <ThemeProvider theme={theme}>
@@ -20,9 +21,9 @@ export const LocationsPage = ({theme}) => {
                 <Navbar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}/>
                 <Box sx={{display: "flex", flexDirection: "row"}}>
                     <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}/>
-                    <Locations/>
+                    <Locations change={change} setChange={setChange}/>
                 </Box>
-                <AddLocation/>
+                <AddLocation change={change} setChange={setChange}/>
             </Box>
         </ThemeProvider>
     )

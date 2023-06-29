@@ -23,7 +23,7 @@ const StyledModal = styled(Modal)({
     justifyContent: "center"
 })
 
-export const AddLocation = () => {
+export const AddLocation = ({change, setChange}) => {
     const [open, setOpen] = useState(false)
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
@@ -63,7 +63,7 @@ export const AddLocation = () => {
                 <Box width={400} height={220} bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
                     <Typography variant={"h6"} textAlign={"center"}>Dodaj lokalizację</Typography>
-                    <Stack direction={"row"} gap={1} mt={2} mb={3}>
+                    <Stack direction={"row"} mt={2} mb={3}>
                         <TextField
                             sx={{width: "100%"}}
                             label={"Lokalizacja"}
@@ -80,6 +80,7 @@ export const AddLocation = () => {
                                     } else {
                                         setOpen(false);
                                         setName("");
+                                        setChange(!change)
                                     }
                                 }}>Dodaj</Button>
                     </ButtonGroup>

@@ -2,10 +2,12 @@ import React, {useState} from "react";
 
 import {
     Accordion,
+    AccordionDetails,
     AccordionSummary,
     Alert,
     Box,
     Button,
+    Divider,
     IconButton,
     ListItem,
     Modal,
@@ -33,7 +35,7 @@ export const Account = ({account, change, setChange}) => {
     });
 
     function deleteAccount(id) {
-        fetch("api/accounts/" + id, {
+        fetch(`api/accounts/${userId}/${id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
@@ -44,6 +46,7 @@ export const Account = ({account, change, setChange}) => {
                 return response.json();
             }
         });
+        setChange(!change)
     }
 
     const editGame = async () => {
@@ -80,6 +83,12 @@ export const Account = ({account, change, setChange}) => {
                         </IconButton>
                     </ListItem>
                 </AccordionSummary>
+                <Divider/>
+                <AccordionDetails>
+                    <Typography>Email: {account.email}</Typography>
+                    <Divider sx={{marginY: "8px"}}/>
+                    <Typography>Hasło: {account.password}</Typography>
+                </AccordionDetails>
             </Accordion>
             <Modal
                 open={openEditGame}
@@ -116,7 +125,8 @@ export const Account = ({account, change, setChange}) => {
             >
                 <Box bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
-                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Czy na pewno chcesz usunąć to konto?</Typography>
+                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Czy na pewno chcesz usunąć to
+                        konto?</Typography>
                     <Stack direction={"row"}>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => setOpen(false)}>No</Button>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => {

@@ -2,10 +2,12 @@ import React, {useState} from "react";
 
 import {
     Accordion,
+    AccordionDetails,
     AccordionSummary,
     Alert,
     Box,
     Button,
+    Divider,
     IconButton,
     ListItem,
     Modal,
@@ -80,6 +82,16 @@ export const Product = ({product, change, setChange}) => {
                         </IconButton>
                     </ListItem>
                 </AccordionSummary>
+                <Divider/>
+                <AccordionDetails>
+                    <Typography>Tytuł: {product.title}</Typography>
+                    <Divider sx={{marginY: "8px"}}/>
+                    <Typography>Cena: {product.price}</Typography>
+                    <Divider sx={{marginY: "8px"}}/>
+                    <Typography sx={{width: "100%"}}>Kategorie: {product.categories.join(", ")}</Typography>
+                    <Divider sx={{marginY: "8px"}}/>
+                    <Typography>Opis: {product.description}</Typography>
+                </AccordionDetails>
             </Accordion>
             <Modal
                 open={openEditGame}
@@ -116,7 +128,8 @@ export const Product = ({product, change, setChange}) => {
             >
                 <Box bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
-                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Czy na pewno chcesz usunąć to konto?</Typography>
+                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Czy na pewno chcesz usunąć to
+                        konto?</Typography>
                     <Stack direction={"row"}>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => setOpen(false)}>No</Button>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => {

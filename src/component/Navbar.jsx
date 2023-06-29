@@ -16,6 +16,7 @@ import {useLocalState} from "../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
 import MenuIcon from "@mui/icons-material/Menu";
 import {ajax} from "../util/fetchService";
+import {orange} from "@mui/material/colors";
 
 const StyledToolbar = styled(Toolbar)({
     display: "flex",
@@ -60,7 +61,7 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
     };
 
     return (
-        <AppBar position={"sticky"}>
+        <AppBar position={"sticky"} color={"primary"} sx={{backgroundColor: orange[500]}}>
             <StyledToolbar>
                 <IconButton
                     color="inherit"

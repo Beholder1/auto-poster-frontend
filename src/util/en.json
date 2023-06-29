@@ -1,0 +1,11 @@
+{
+  "global": {
+    "add": "Add",
+    "delete": "Delete",
+    "edit": "Edit",
+    "error": "Error"
+  },
+  "accounts": {
+    "create": "Add account"
+  }
+}

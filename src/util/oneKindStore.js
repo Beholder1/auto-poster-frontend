@@ -1,13 +1,13 @@
 import create from 'zustand';
 import {persist} from "zustand/middleware";
 
-export const useThemeStore = create(persist((set, get) => {
+export const useOneKindStore = create(persist((set, get) => {
     return {
-        mode: "light",
+        mode: true,
         setMode: (newMode) => {
             set(() => ({
                 mode: newMode
             }))
         }
     }
-}, {name: "theme"}))
+}, {name: "oneKind"}))

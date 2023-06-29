@@ -8,11 +8,10 @@ import jwt_decode from "jwt-decode";
 import TextField from "@mui/material/TextField";
 import {Location} from "./Location";
 
-export const Locations = () => {
+export const Locations = ({change, setChange}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const [search, setSearch] = useState("");
     const userId = jwt_decode(jwt).id;
-    const [change, setChange] = useState(false)
     const [page, setPage] = React.useState(1);
 
 

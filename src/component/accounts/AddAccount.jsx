@@ -16,6 +16,7 @@ import {
 import {Add as AddIcon} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 const StyledModal = styled(Modal)({
     display: "flex",
@@ -25,25 +26,41 @@ const StyledModal = styled(Modal)({
 
 export const AddAccount = () => {
     const [open, setOpen] = useState(false)
+    const [openAlert, setOpenAlert] = useState(false);
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
-    const [gameName, setGameName] = React.useState("");
-    const [openAlert, setOpenAlert] = useState(false);
+    const {t} = useTranslation();
+    const [account, setAccount] = React.useState({
+        name: "",
+        email: "",
+        password: "",
+    });
 
-    const addGame = async (name) => {
-        const response = await fetch("api/games?name=" + name, {
+    function createPost() {
+        fetch(`api/accounts/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
             method: "POST",
+            body: JSON.stringify(account)
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
         });
+    }
 
-        if (response.status === 200) {
-            return "Success";
-        } else {
-            return "Error";
+    function validate() {
+        let message = ""
+        if (account.name === "") {
+            message = "Nie podano nazwy konta!"
+        } else if (account.email === "") {
+            message = "Nie podano adresu email!"
+        } else if (account.password === "") {
+            message = "Nie podano hasła!"
         }
+        return message;
     }
 
     return (
@@ -57,34 +74,52 @@ export const AddAccount = () => {
                 open={open}
                 onClose={e => setOpen(false)}
             >
-                <Box width={400} height={220} bgcolor={"background.default"} color={"text.primary"} p={3}
+                <Box width={600} height={300} bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
-                    <Typography variant={"h6"} textAlign={"center"}>Add game</Typography>
+                    <Typography variant={"h6"} textAlign={"center"}>Dodaj konto</Typography>
                     <Stack direction={"row"} gap={1} mt={2} mb={3}>
-                        <TextField
-                            sx={{width: "100%"}}
-                            label={"Name"}
-                            value={gameName}
-                            onChange={(event) => setGameName(event.target.value)}
+                        <TextField label="Nazwa" sx={{width: "100%"}}
+                                   value={account.name}
+                                   onChange={(event) => {
+                                       setAccount({...account, name: event.target.value})
+                                   }}
+                        />
+                    </Stack>
+                    <Stack direction={"row"} gap={1} mt={2} mb={3}>
+                        <TextField label="Email" sx={{width: "100%"}}
+                                   value={account.email}
+                                   onChange={(event) => {
+                                       setAccount({...account, email: event.target.value})
+                                   }}
+                        />
+                        <TextField label="Hasło" sx={{width: "100%"}}
+                                   value={account.password}
+                                   onChange={(event) => {
+                                       setAccount({...account, password: event.target.value})
+                                   }}
                         />
                     </Stack>
                     <ButtonGroup fullWidth variant="contained">
                         <Button variant="contained" fullWidth type={"submit"}
-                                onClick={async () => {
-                                    let response = await addGame(gameName);
-                                    if (response === "Error") {
-                                        setOpenAlert(true)
-                                    } else {
+                                onClick={() => {
+                                    if (validate() === "") {
+                                        createPost();
                                         setOpen(false);
-                                        setGameName("");
+                                        setAccount({
+                                            description: "",
+                                            ageMin: "",
+                                            ageMax: "",
+                                        });
+                                    } else {
+                                        setOpenAlert(true)
                                     }
-                                }}>Add</Button>
+                                }}>Dodaj</Button>
                     </ButtonGroup>
                 </Box>
             </StyledModal>
             <Snackbar open={openAlert} autoHideDuration={4000} onClose={() => setOpenAlert(false)}>
                 <Alert onClose={() => setOpenAlert(false)} severity="error" sx={{width: '100%'}}>
-                    Game already exists!
+                    {validate()}
                 </Alert>
             </Snackbar>
         </>

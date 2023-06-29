@@ -1,5 +1,5 @@
-import {Box, Button, Divider, IconButton, ListItem, Modal, Typography} from "@mui/material";
-import {Delete, GroupAdd} from "@mui/icons-material";
+import {Box, Button, Divider, IconButton, ListItem, Modal, TextField, Typography} from "@mui/material";
+import {Delete, Edit} from "@mui/icons-material";
 import React, {useState} from "react";
 import {useLocalState} from "../../util/useLocalStorage";
 import jwt_decode from "jwt-decode";
@@ -7,10 +7,9 @@ import jwt_decode from "jwt-decode";
 export const Location = ({location, change, setChange}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
-    const [openAddMember, setOpenAddMember] = useState(false)
-    const [team, setTeam] = useState("")
+    const [openEditLocation, setOpenEditLocation] = useState(false)
     const [locationId, setLocationId] = useState("")
-    const [reFetch, setReFetch] = useState(false)
+    const [name, setName] = React.useState("");
 
     function deleteLocation(locationId) {
         fetch("api/locations/" + userId + "/" + locationId, {
@@ -27,24 +26,24 @@ export const Location = ({location, change, setChange}) => {
         setChange(!change)
     }
 
-    function addToTeam(id, teamId) {
+    function editLocation(id, name) {
         let addMember = {
-            teamId: teamId,
-            userId: id,
-            adminId: userId
+            id: id,
+            name: name
         }
-        fetch("/api/teams/add-member", {
+        fetch(`/api/locations/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
-            method: "POST",
+            method: "PUT",
             body: JSON.stringify(addMember)
         }).then((response) => {
             if (response.status === 200) {
                 return response.json();
             }
         });
+        setChange(!change)
     }
 
     return (
@@ -53,10 +52,9 @@ export const Location = ({location, change, setChange}) => {
                 <Typography marginX={"5px"} sx={{width: "100%"}}>{location.name}</Typography>
                 <IconButton onClick={() => {
                     setLocationId(location.id)
-                    setReFetch(!reFetch)
-                    setOpenAddMember(true)
+                    setOpenEditLocation(true)
                 }
-                }><GroupAdd/></IconButton>
+                }><Edit/></IconButton>
                 <IconButton onClick={() => {
                     deleteLocation(location.id)
                 }
@@ -64,8 +62,8 @@ export const Location = ({location, change, setChange}) => {
             </ListItem>
             <Divider/>
             <Modal
-                open={openAddMember}
-                onClose={() => setOpenAddMember(false)} sx={{
+                open={openEditLocation}
+                onClose={() => setOpenEditLocation(false)} sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -73,13 +71,17 @@ export const Location = ({location, change, setChange}) => {
             >
                 <Box bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
-                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Add friend
-                        to your
-                        team</Typography>
+                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Edytuj lokalizację</Typography>
+                    <TextField
+                        sx={{width: "100%"}}
+                        label={"Lokalizacja"}
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                    />
                     <Button variant="contained" fullWidth type={"submit"} onClick={() => {
-                        addToTeam(location.id, team)
-                        setOpenAddMember(false)
-                    }}>Add</Button>
+                        editLocation(location.id, name)
+                        setOpenEditLocation(false)
+                    }}>Edytuj</Button>
                 </Box>
             </Modal>
         </>
