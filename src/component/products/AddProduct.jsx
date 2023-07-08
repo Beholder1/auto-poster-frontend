@@ -37,16 +37,14 @@ export const AddProduct = () => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
     const inputFile = useRef(null)
-    const [images, setImages] = useState([]);
+
     const [product, setProduct] = React.useState({
         name: "",
         title: "",
         price: "",
         categoryId: "",
-        description: ""
-    });
-    const [values, setValues] = React.useState({
-        name: ""
+        description: "",
+        images: []
     });
 
     const {data: categories, status: categoryStatus} = useQuery('categories', fetchCategories)
@@ -56,17 +54,15 @@ export const AddProduct = () => {
     }
 
     function createPost() {
-        let postToPost;
-        postToPost = {...product, userId: userId}
-        fetch("api/posts", {
+        fetch(`api/products/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
             method: "POST",
-            body: JSON.stringify(postToPost)
+            body: JSON.stringify(product)
         }).then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201) {
                 return response.json();
             }
         });
@@ -99,14 +95,21 @@ export const AddProduct = () => {
                 open={open}
                 onClose={e => {
                     setOpen(false)
-                    setImages([])
+                    setProduct({
+                        name: "",
+                        title: "",
+                        price: "",
+                        categoryId: "",
+                        description: "",
+                        images: []
+                    });
                 }}
             >
                 <Box width="90%" bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5} height={"90%"}>
                     <Typography variant={"h6"} textAlign={"center"}>Dodaj produkt</Typography>
-                    <Stack direction={"row"}>
-                        <Stack width={"50%"}>
+                    <Stack sx={{flexDirection: {xs: 'column', sm: 'row'}}}>
+                        <Stack sx={{width: {xs: '100%', sm: '50%'}}}>
                             <Stack direction={"row"} gap={1} mt={2} mb={3}>
                                 <TextField label="Nazwa" sx={{width: "100%"}}
                                            value={product.name}
@@ -153,20 +156,28 @@ export const AddProduct = () => {
                                 spellCheck={"false"}
                                 value={product.description}
                                 onChange={(event) => {
-                                    setValues({...values, name: event.target.value});
                                     setProduct({...product, description: event.target.value})
                                 }}
                             />
                         </Stack>
                         <Divider orientation={"vertical"} flexItem sx={{m: 2, display: {xs: 'none', sm: 'block'}}}/>
-                        <ImageList sx={{width: "50%", height: 520}} cols={3} rowHeight={164}>
-                            {images.map((item, i) => (
-                                <Badge sx={{m: "7px"}} badgeContent={<Clear fontSize={"inherit"}/>} color="error">
-                                    <ImageListItem key={i}>
+                        <input type='file' multiple accept={"image/*"} ref={inputFile} style={{display: 'none'}}
+                               onChange={(e) => {
+                                   //setProduct({...product, images: [...product.images, ...e.target.files]})
+                                   setProduct({...product, images: [...product.images, ...[...e.target.files].map(e => URL.createObjectURL(e))]})
+                               }}
+                               onClick={(event)=> {
+                                   event.target.value = null}}/>
+                        <ImageList sx={{width: {xs: '100%', sm: '50%'}, height: 520}} rowHeight={164} cols={3}>
+                            {product.images.map((item, i) => (
+                                <Badge key={i} sx={{m: "7px"}} badgeContent={<Clear fontSize={"inherit"}/>} color="error" onClick={(i) => {
+                                    setProduct({...product, images: product.images.filter((image) => image !== item)})
+                                }}>
+                                    <ImageListItem>
                                         <img
-                                            src={`${URL.createObjectURL(item)}`}
-                                            srcSet={`${URL.createObjectURL(item)}`}
-                                            alt={item.title}
+                                            src={`${item}`}
+                                            srcSet={`${item}`}
+                                            alt={item.name}
                                         />
                                         <ImageListItemBar
                                             title={item.name}
@@ -174,10 +185,6 @@ export const AddProduct = () => {
                                     </ImageListItem>
                                 </Badge>
                             ))}
-                            <input type='file' multiple accept={"image/*"} ref={inputFile} style={{display: 'none'}}
-                                   onChange={(e) => {
-                                       setImages([...images, ...e.target.files])
-                                   }}/>
                             <ImageListItem
                                 onClick={() => {
                                     inputFile.current.click();
@@ -196,7 +203,6 @@ export const AddProduct = () => {
                                 </Stack>
                             </ImageListItem>
                         </ImageList>
-
                     </Stack>
                     <Button variant="contained" fullWidth type={"submit"}
                             onClick={() => {
@@ -204,15 +210,13 @@ export const AddProduct = () => {
                                     createPost();
                                     setOpen(false);
                                     setProduct({
-                                        type: "",
-                                        gameId: "",
-                                        rankId: "",
-                                        languageId: "",
+                                        name: "",
+                                        title: "",
+                                        price: "",
+                                        categoryId: "",
                                         description: "",
-                                        ageMin: "",
-                                        ageMax: "",
+                                        images: []
                                     });
-                                    setValues({name: ""});
                                 } else {
                                     setOpenAlert(true)
                                 }
