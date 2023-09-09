@@ -37,7 +37,7 @@ export const AddProduct = () => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const userId = jwt_decode(jwt).id;
     const inputFile = useRef(null)
-
+    const formData = new FormData()
     const [product, setProduct] = React.useState({
         name: "",
         title: "",
@@ -56,11 +56,10 @@ export const AddProduct = () => {
     function createPost() {
         fetch(`api/products/${userId}`, {
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
             method: "POST",
-            body: JSON.stringify(product)
+            body: formData
         }).then((response) => {
             if (response.status === 201) {
                 return response.json();
@@ -164,7 +163,7 @@ export const AddProduct = () => {
                         <input type='file' multiple accept={"image/*"} ref={inputFile} style={{display: 'none'}}
                                onChange={(e) => {
                                    //setProduct({...product, images: [...product.images, ...e.target.files]})
-                                   setProduct({...product, images: [...product.images, ...[...e.target.files].map(e => URL.createObjectURL(e))]})
+                                   setProduct({...product, images: [...product.images, ...[...e.target.files]]})
                                }}
                                onClick={(event)=> {
                                    event.target.value = null}}/>
@@ -175,8 +174,8 @@ export const AddProduct = () => {
                                 }}>
                                     <ImageListItem>
                                         <img
-                                            src={`${item}`}
-                                            srcSet={`${item}`}
+                                            src={`${URL.createObjectURL(item)}`}
+                                            srcSet={`${URL.createObjectURL(item)}`}
                                             alt={item.name}
                                         />
                                         <ImageListItemBar
@@ -207,6 +206,15 @@ export const AddProduct = () => {
                     <Button variant="contained" fullWidth type={"submit"}
                             onClick={() => {
                                 if (validate() === "") {
+                                    for (const key in product) {
+                                        if (key !== "images") {
+                                            formData.append(key, product[key]);
+                                            continue;
+                                        }
+                                        for (let i = 0; i < product.images.length; i++) {
+                                            formData.append('images', product.images[i]);
+                                        }
+                                    }
                                     createPost();
                                     setOpen(false);
                                     setProduct({
