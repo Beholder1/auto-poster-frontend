@@ -34,8 +34,8 @@ export const Product = ({product, change, setChange}) => {
         name: ""
     });
 
-    function deleteAccount(id) {
-        fetch("api/accounts/" + id, {
+    function deleteProduct(id) {
+        fetch("api/products/" + userId + "/" + id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
@@ -134,7 +134,7 @@ export const Product = ({product, change, setChange}) => {
                         <Button variant="text" fullWidth type={"submit"} onClick={() => setOpen(false)}>No</Button>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => {
                             queryClient.invalidateQueries('products')
-                            deleteAccount(product.id)
+                            deleteProduct(product.id)
                             setOpen(false)
                         }}>Yes</Button>
                     </Stack>

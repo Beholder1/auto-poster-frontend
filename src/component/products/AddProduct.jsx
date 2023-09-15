@@ -42,7 +42,7 @@ export const AddProduct = () => {
         name: "",
         title: "",
         price: "",
-        categoryId: "",
+        categoryId: [],
         description: "",
         images: []
     });
@@ -98,7 +98,7 @@ export const AddProduct = () => {
                         name: "",
                         title: "",
                         price: "",
-                        categoryId: "",
+                        categoryIds: [],
                         description: "",
                         images: []
                     });
@@ -142,7 +142,7 @@ export const AddProduct = () => {
                                     sx={{width: "100%"}}
                                     disablePortal
                                     renderInput={(params) => <TextField {...params} label="Kategoria"/>}
-                                    onChange={(e, value) => product.categoryId = value ? value.id : ""}/>
+                                    onChange={(e, value) => product.categoryIds.push(value ? value.id : "")}/>
                             </Stack>
                             <TextField
                                 sx={{width: "100%"}}
@@ -165,11 +165,13 @@ export const AddProduct = () => {
                                    //setProduct({...product, images: [...product.images, ...e.target.files]})
                                    setProduct({...product, images: [...product.images, ...[...e.target.files]]})
                                }}
-                               onClick={(event)=> {
-                                   event.target.value = null}}/>
+                               onClick={(event) => {
+                                   event.target.value = null
+                               }}/>
                         <ImageList sx={{width: {xs: '100%', sm: '50%'}, height: 520}} rowHeight={164} cols={3}>
                             {product.images.map((item, i) => (
-                                <Badge key={i} sx={{m: "7px"}} badgeContent={<Clear fontSize={"inherit"}/>} color="error" onClick={(i) => {
+                                <Badge key={i} sx={{m: "7px"}} badgeContent={<Clear fontSize={"inherit"}/>}
+                                       color="error" onClick={(i) => {
                                     setProduct({...product, images: product.images.filter((image) => image !== item)})
                                 }}>
                                     <ImageListItem>
@@ -221,7 +223,7 @@ export const AddProduct = () => {
                                         name: "",
                                         title: "",
                                         price: "",
-                                        categoryId: "",
+                                        categoryIds: [],
                                         description: "",
                                         images: []
                                     });
