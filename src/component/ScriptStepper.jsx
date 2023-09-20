@@ -8,12 +8,21 @@ import Typography from '@mui/material/Typography';
 import {FirstScriptStep} from "./FirstScriptStep";
 import {SecondScriptStep} from "./SecondScriptStep";
 import {ThirdScriptStep} from "./ThirdScriptStep";
+import jwt_decode from "jwt-decode";
+import {useLocalState} from "../util/useLocalStorage";
 
 const steps = ['Wybierz ustawienia', 'Wybierz konta', 'Wybierz produkty'];
 
 export default function ScriptStepper() {
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
+    const [jwt, setJwt] = useLocalState("", "jwt")
+    const userId = jwt_decode(jwt).id;
+    const [scriptBody, setScriptBody] = React.useState({
+        accountIds: [],
+        productsWithImages: [],
+        hideBeforeFriends: ""
+    });
 
     const isStepSkipped = (step) => {
         return skipped.has(step);
@@ -49,6 +58,20 @@ export default function ScriptStepper() {
             default:
                 break;
         }
+    }
+
+    function runScript() {
+        fetch(`api/script/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            },
+            method: "POST",
+            body: scriptBody
+        }).then((response) => {
+            if (response.status === 201) {
+                return response.json();
+            }
+        });
     }
 
     return (
@@ -90,7 +113,8 @@ export default function ScriptStepper() {
                         </Button>
                         <Box sx={{flex: '1 1 auto'}}/>
 
-                        <Button onClick={handleNext}>
+                        <Button
+                            onClick={activeStep === steps.length - 1 ? () => runScript() : () => handleNext()}>
                             {activeStep === steps.length - 1 ? 'Uruchom' : 'Dalej'}
                         </Button>
                     </Box>
