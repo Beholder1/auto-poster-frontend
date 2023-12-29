@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import {Logout} from "@mui/icons-material";
 import {useLocalState} from "../util/useLocalStorage";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import MenuIcon from "@mui/icons-material/Menu";
 import {ajax} from "../util/fetchService";
 
@@ -31,8 +31,8 @@ const Icons = styled(Box)(({theme}) => ({
 
 export const Navbar = ({mobileOpen, setMobileOpen}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const username = jwt_decode(jwt).username;
-    const userId = jwt_decode(jwt).id;
+    const username = jwtDecode(jwt).username;
+    const userId = jwtDecode(jwt).id;
     const [anchorProfile, setAnchorProfile] = useState(null);
     const openProfile = Boolean(anchorProfile);
     const [anchorNotification, setAnchorNotification] = useState(null);

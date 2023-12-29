@@ -2,7 +2,7 @@ import {Checkbox, Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../util/useLocalStorage";
 import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
 import {useOneKindStore} from "../util/oneKindStore";
@@ -19,7 +19,7 @@ export const FirstScriptStep = () => {
     const postsQuantity = usePostsQuantityStore(state => state.mode);
     const setPostsQuantity = usePostsQuantityStore(state => state.setMode);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
 
     return (
         <>

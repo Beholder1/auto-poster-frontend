@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Box, ThemeProvider} from "@mui/material";
 import {Navbar} from "./Navbar";
 import {Sidebar} from "./Sidebar";
@@ -6,7 +6,7 @@ import {Feed} from "./Feed";
 import {Helmet} from "react-helmet";
 
 export const Homepage = ({theme}) => {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
         <ThemeProvider theme={theme}>

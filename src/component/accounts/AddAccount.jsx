@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import {Add as AddIcon} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import {useTranslation} from "react-i18next";
 
 const StyledModal = styled(Modal)({
@@ -28,8 +28,7 @@ export const AddAccount = () => {
     const [open, setOpen] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
-    const {t} = useTranslation();
+    const userId = jwtDecode(jwt).id;
     const [account, setAccount] = React.useState({
         name: "",
         email: "",

@@ -22,7 +22,7 @@ import {Add as AddIcon, Clear} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import {LoadingFetch} from "../LoadingFetch";
 
 const StyledModal = styled(Modal)({
@@ -35,7 +35,7 @@ export const AddProduct = () => {
     const [open, setOpen] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
     const inputFile = useRef(null)
     const formData = new FormData()
     const [product, setProduct] = React.useState({

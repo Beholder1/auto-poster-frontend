@@ -4,7 +4,7 @@ import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText
 import {DarkMode, Groups, Home, LightMode, LocationOn, Person, Sell, Settings} from "@mui/icons-material";
 import {useThemeStore} from "../util";
 import Drawer from "@mui/material/Drawer";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../util/useLocalStorage";
 
 const drawerWidth = 240;
@@ -17,7 +17,7 @@ export const Sidebar = (props) => {
     const setMode = useThemeStore(state => state.setMode);
     const [selectedIndex, setSelectedIndex] = React.useState(1);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userRole = jwt_decode(jwt).roles[0]
+    const userRole = jwtDecode(jwt).roles[0]
 
 
     const handleDrawerToggle = () => {

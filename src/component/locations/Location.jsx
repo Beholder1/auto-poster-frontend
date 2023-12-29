@@ -2,11 +2,11 @@ import {Box, Button, Divider, IconButton, ListItem, Modal, TextField, Typography
 import {Delete, Edit} from "@mui/icons-material";
 import React, {useState} from "react";
 import {useLocalState} from "../../util/useLocalStorage";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 export const Location = ({location, change, setChange}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
     const [openEditLocation, setOpenEditLocation] = useState(false)
     const [locationId, setLocationId] = useState("")
     const [name, setName] = React.useState("");

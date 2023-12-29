@@ -8,21 +8,21 @@ import Typography from '@mui/material/Typography';
 import {FirstScriptStep} from "./FirstScriptStep";
 import {SecondScriptStep} from "./SecondScriptStep";
 import {ThirdScriptStep} from "./ThirdScriptStep";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../util/useLocalStorage";
+import {useSearchParams} from "react-router-dom";
+import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
+import {useState} from "react";
 
 const steps = ['Wybierz ustawienia', 'Wybierz konta', 'Wybierz produkty'];
 
 export default function ScriptStepper() {
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [skipped, setSkipped] = React.useState(new Set());
+    const hideBeforeFriends = useHideBeforeFriendsStore(state => state.mode);
+    const [activeStep, setActiveStep] = useState(0);
+    const [skipped, setSkipped] = useState(new Set());
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
-    const [scriptBody, setScriptBody] = React.useState({
-        accountIds: [],
-        productsWithImages: [],
-        hideBeforeFriends: ""
-    });
+    const userId = jwtDecode(jwt).id;
+    const [urlParams, setUrlParams] = useSearchParams()
 
     const isStepSkipped = (step) => {
         return skipped.has(step);
@@ -61,12 +61,28 @@ export default function ScriptStepper() {
     }
 
     function runScript() {
+        let accountIds = []
+        let productIds = []
+        urlParams.forEach((v, k) => {
+            if (k.startsWith('account')) {
+                accountIds.push(Number(v))
+            }
+            if (k.startsWith('product')) {
+                productIds.push(Number(v))
+            }
+        })
+        let scriptBody = {
+            accountIds: accountIds,
+            productsWithImages: productIds,
+            hideBeforeFriends: hideBeforeFriends
+        }
         fetch(`api/script/${userId}`, {
             headers: {
+                'Content-Type': 'application/JSON',
                 Authorization: `Bearer ${jwt}`
             },
             method: "POST",
-            body: scriptBody
+            body: JSON.stringify(scriptBody)
         }).then((response) => {
             if (response.status === 201) {
                 return response.json();
@@ -91,7 +107,7 @@ export default function ScriptStepper() {
                 })}
             </Stepper>
             {activeStep === steps.length ? (
-                <React.Fragment>
+                <>
                     <Typography sx={{mt: 2, mb: 1}}>
                         All steps completed - you&apos;re finished
                     </Typography>
@@ -99,9 +115,9 @@ export default function ScriptStepper() {
                         <Box sx={{flex: '1 1 auto'}}/>
                         <Button onClick={handleReset}>Reset</Button>
                     </Box>
-                </React.Fragment>
+                </>
             ) : (
-                <React.Fragment>
+                <>
                     {pickStep(activeStep)}
                     <Box sx={{display: 'flex', flexDirection: 'row', pt: 2}}>
                         <Button
@@ -118,7 +134,7 @@ export default function ScriptStepper() {
                             {activeStep === steps.length - 1 ? 'Uruchom' : 'Dalej'}
                         </Button>
                     </Box>
-                </React.Fragment>
+                </>
             )}
         </Box>
     );

@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
 import {useQueryClient} from "react-query";
@@ -25,7 +25,7 @@ import {useQueryClient} from "react-query";
 export const Product = ({product, change, setChange}) => {
     const queryClient = useQueryClient();
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
     const [openEditGame, setOpenEditGame] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false)

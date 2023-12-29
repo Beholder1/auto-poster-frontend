@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import {Add as AddIcon} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 const StyledModal = styled(Modal)({
     display: "flex",
@@ -26,7 +26,7 @@ const StyledModal = styled(Modal)({
 export const AddLocation = ({change, setChange}) => {
     const [open, setOpen] = useState(false)
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
     const [name, setName] = React.useState("");
     const [openAlert, setOpenAlert] = useState(false);
 

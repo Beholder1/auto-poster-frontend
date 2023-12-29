@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Box, ThemeProvider} from "@mui/material";
 import {Navbar} from "../Navbar";
 import {Sidebar} from "../Sidebar";
@@ -8,7 +8,7 @@ import {AddProduct} from "./AddProduct";
 
 
 export const ProductsPage = ({theme}) => {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
         <ThemeProvider theme={theme}>

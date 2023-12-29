@@ -4,16 +4,16 @@ import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
 import {LoadingFetch} from "../LoadingFetch";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import TextField from "@mui/material/TextField";
 import {Product} from "./Product";
 
 export const Products = () => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const [search, setSearch] = useState("");
-    const userId = jwt_decode(jwt).id;
+    const userId = jwtDecode(jwt).id;
     const [change, setChange] = useState(false)
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
 
     const handleChange = (event, value) => {
         setPage(value);
