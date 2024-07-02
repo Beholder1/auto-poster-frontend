@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,7 +13,6 @@ import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../util/useLocalStorage";
 import {useSearchParams} from "react-router-dom";
 import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
-import {useState} from "react";
 
 const steps = ['Wybierz ustawienia', 'Wybierz konta', 'Wybierz produkty'];
 

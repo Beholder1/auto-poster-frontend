@@ -3,10 +3,10 @@ import {useState} from 'react';
 import TextField from '@mui/material/TextField';
 import {Avatar, Box, Button, Grid, Link, Paper, Stack, Switch, ThemeProvider, Typography} from "@mui/material";
 import {DarkMode, LightMode, MailOutlined} from "@mui/icons-material";
-import {theme} from "../theme";
-import {useLocalState} from "../util/useLocalStorage";
+import {theme} from "../../theme";
+import {useLocalState} from "../../util/useLocalStorage";
 import {Helmet} from 'react-helmet';
-import {useThemeStore} from "../util";
+import {useThemeStore} from "../../util";
 
 const paperStyle = {
     height: "70vh",
@@ -115,7 +115,7 @@ export function ForgotPassword({theme}) {
                 </Paper>
                 <Stack direction="row" alignItems="center" justifyContent="center">
                     <LightMode/>
-                    <Switch onChange={e => setMode()} checked={mode === "dark"}/>
+                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
                     <DarkMode/>
                 </Stack>
             </Box>

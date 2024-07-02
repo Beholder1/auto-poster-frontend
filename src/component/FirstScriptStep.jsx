@@ -1,7 +1,5 @@
-import {Checkbox, Stack} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import * as React from "react";
-import TextField from "@mui/material/TextField";
+import React from "react";
+import {Checkbox, Stack, TextField, Typography} from "@mui/material";
 import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../util/useLocalStorage";
 import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
@@ -9,52 +7,52 @@ import {useOneKindStore} from "../util/oneKindStore";
 import {useAccountsQuantityStore} from "../util/accountsQuantityStore";
 import {usePostsQuantityStore} from "../util/postsQuantityStore";
 
+const handleInputChange = (event, setter, maxValue = 100) => {
+    let value = event.target.value;
+    value = value.replace(/[-+]/g, "");
+    value = value < 1 ? "" : value;
+    value = value > maxValue ? maxValue : value;
+    setter(value);
+};
+
 export const FirstScriptStep = () => {
-    const hideBeforeFriends = useHideBeforeFriendsStore(state => state.mode);
-    const setHideBeforeFriends = useHideBeforeFriendsStore(state => state.setMode);
-    const oneKind = useOneKindStore(state => state.mode);
-    const setOneKind = useOneKindStore(state => state.setMode);
-    const accountsQuantity = useAccountsQuantityStore(state => state.mode);
-    const setAccountsQuantity = useAccountsQuantityStore(state => state.setMode);
-    const postsQuantity = usePostsQuantityStore(state => state.mode);
-    const setPostsQuantity = usePostsQuantityStore(state => state.setMode);
-    const [jwt, setJwt] = useLocalState("", "jwt")
+    const hideBeforeFriends = useHideBeforeFriendsStore((state) => state.mode);
+    const setHideBeforeFriends = useHideBeforeFriendsStore((state) => state.setMode);
+    const oneKind = useOneKindStore((state) => state.mode);
+    const setOneKind = useOneKindStore((state) => state.setMode);
+    const accountsQuantity = useAccountsQuantityStore((state) => state.mode);
+    const setAccountsQuantity = useAccountsQuantityStore((state) => state.setMode);
+    const postsQuantity = usePostsQuantityStore((state) => state.mode);
+    const setPostsQuantity = usePostsQuantityStore((state) => state.setMode);
+    const [jwt, setJwt] = useLocalState("", "jwt");
     const userId = jwtDecode(jwt).id;
 
     return (
         <>
             <Stack direction="row" alignItems="center" mt={2}>
                 <Typography>Ukryj przed znajomymi</Typography>
-                <Checkbox checked={hideBeforeFriends} onChange={e => setHideBeforeFriends(!hideBeforeFriends)}/>
+                <Checkbox checked={hideBeforeFriends} onChange={() => setHideBeforeFriends(!hideBeforeFriends)}/>
             </Stack>
             <Stack direction="row" alignItems="center" mt={2}>
                 <Typography>Jeden rodzaj produktu</Typography>
-                <Checkbox checked={oneKind} onChange={e => setOneKind(!oneKind)}/>
+                <Checkbox checked={oneKind} onChange={() => setOneKind(!oneKind)}/>
             </Stack>
             <Stack direction="row" alignItems="center" mt={2}>
-                <TextField type="number"
-                           value={accountsQuantity}
-                           label={"Ilość kont"}
-                           onChange={(event) => {
-                               event.target.value = event.target.value.includes("-") ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value.includes("+") ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value < 1 ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value > 100 ? (event.target.value = 100) : event.target.value
-                               setAccountsQuantity(event.target.value)
-                           }}/>
+                <TextField
+                    type="number"
+                    value={accountsQuantity}
+                    label="Ilość kont"
+                    onChange={(event) => handleInputChange(event, setAccountsQuantity)}
+                />
             </Stack>
             <Stack direction="row" alignItems="center" mt={2}>
-                <TextField type="number"
-                           value={postsQuantity}
-                           label={"Ilość ogłoszeń"}
-                           onChange={(event) => {
-                               event.target.value = event.target.value.includes("-") ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value.includes("+") ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value < 1 ? (event.target.value = "") : event.target.value
-                               event.target.value = event.target.value > 100 ? (event.target.value = 100) : event.target.value
-                               setPostsQuantity(event.target.value)
-                           }}/>
+                <TextField
+                    type="number"
+                    value={postsQuantity}
+                    label="Ilość ogłoszeń"
+                    onChange={(event) => handleInputChange(event, setPostsQuantity)}
+                />
             </Stack>
         </>
-    )
-}
+    );
+};

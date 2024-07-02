@@ -22,7 +22,7 @@ const StyledToolbar = styled(Toolbar)({
     justifyContent: "space-between"
 })
 
-const Icons = styled(Box)(({theme}) => ({
+const Icons = styled(Box)(() => ({
     alignItems: "center",
     gap: "20px",
     display: "flex"
@@ -71,7 +71,7 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 >
                     <MenuIcon/>
                 </IconButton>
-                <Typography variant={"h6"} sx={{display: {xs: "none", sm: "block"}}}>Site name</Typography>
+                <Typography variant="h6" sx={{display: {xs: "none", sm: "block"}}}>Site name</Typography>
                 <Icons>
                     <Avatar sx={{width: 30, height: 30, bgcolor: "red"}}
                             onClick={handleProfileClick}>{username[0]}</Avatar>
@@ -171,4 +171,3 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
         </AppBar>
     )
 }
-//fontSize="small"

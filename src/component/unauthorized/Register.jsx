@@ -1,11 +1,11 @@
 import {Avatar, Box, Button, Grid, Link, Paper, Stack, Switch, ThemeProvider, Typography} from "@mui/material";
 import {DarkMode, LightMode, VpnKey} from "@mui/icons-material";
 import TextField from "@mui/material/TextField";
-import {theme} from "../theme";
+import {theme} from "../../theme";
 import * as React from "react";
 import {useState} from "react";
 import {Helmet} from 'react-helmet';
-import {useThemeStore} from "../util";
+import {useThemeStore} from "../../util";
 
 const paperStyle = {
     height: "70vh",
@@ -144,7 +144,7 @@ export function Register({theme}) {
                 </Paper>
                 <Stack direction="row" alignItems="center" justifyContent="center">
                     <LightMode/>
-                    <Switch onChange={e => setMode()} checked={mode === "dark"}/>
+                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
                     <DarkMode/>
                 </Stack>
             </Box>

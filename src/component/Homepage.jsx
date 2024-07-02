@@ -13,13 +13,13 @@ export const Homepage = ({theme}) => {
             <Helmet>
                 <title>Strona główna</title>
             </Helmet>
-            <Box bgcolor={"background.default"} color={"text.primary"}>
+            <Box bgcolor="background.default" color="text.primary">
                 <Navbar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}/>
-                <Box sx={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                <Box display="flex" flexDirection="row" justifyContent="space-between">
                     <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}/>
                     <Feed/>
                 </Box>
             </Box>
         </ThemeProvider>
-    )
+    );
 }

@@ -16,7 +16,6 @@ import {
 import {Add as AddIcon} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
 import {jwtDecode} from "jwt-decode";
-import {useTranslation} from "react-i18next";
 
 const StyledModal = styled(Modal)({
     display: "flex",
@@ -64,14 +63,14 @@ export const AddAccount = () => {
 
     return (
         <>
-            <Tooltip onClick={e => setOpen(true)} title={"Add"} sx={{position: "fixed", bottom: 20, right: 20}}>
+            <Tooltip onClick={() => setOpen(true)} title={"Add"} sx={{position: "fixed", bottom: 20, right: 20}}>
                 <Fab color={"primary"}>
                     <AddIcon/>
                 </Fab>
             </Tooltip>
             <StyledModal
                 open={open}
-                onClose={e => setOpen(false)}
+                onClose={() => setOpen(false)}
             >
                 <Box width={600} height={300} bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>

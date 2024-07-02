@@ -27,63 +27,63 @@ export const Sidebar = (props) => {
     const drawer = (
         <List>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/homepage"} selected={selectedIndex === 0}>
+                <ListItemButton component="a" href={"/homepage"} selected={selectedIndex === 0}>
                     <ListItemIcon>
                         <Home/>
                     </ListItemIcon>
-                    <ListItemText primary={"Strona główna"}/>
+                    <ListItemText primary="Strona główna"/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/accounts"}>
+                <ListItemButton component="a" href={"/accounts"}>
                     <ListItemIcon>
                         <Person/>
                     </ListItemIcon>
-                    <ListItemText primary={"Konta"}/>
+                    <ListItemText primary="Konta"/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/products"}>
+                <ListItemButton component="a" href="/products">
                     <ListItemIcon>
                         <Sell/>
                     </ListItemIcon>
-                    <ListItemText primary={"Produkty"}/>
+                    <ListItemText primary="Produkty"/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/locations"}>
+                <ListItemButton component="a" href="/locations">
                     <ListItemIcon>
                         <LocationOn/>
                     </ListItemIcon>
-                    <ListItemText primary={"Lokalizacje"}/>
+                    <ListItemText primary="Lokalizacje"/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
             {userRole === "admin" ?
                 <>
                     <ListItem disablePadding>
-                        <ListItemButton component={"a"} href={"/users"}>
+                        <ListItemButton component="a" href="/users">
                             <ListItemIcon>
                                 <Groups/>
                             </ListItemIcon>
-                            <ListItemText primary={"Users"}/>
+                            <ListItemText primary="Users"/>
                         </ListItemButton>
                     </ListItem>
                     <Divider/>
                 </> : <></>
             }
             <ListItem disablePadding>
-                <ListItemButton component={"a"} href={"/settings"}>
+                <ListItemButton component="a" href="/settings">
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
-                    <ListItemText primary={"Ustawienia"}/>
+                    <ListItemText primary="Ustawienia"/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
                 <ListItemButton>
                     <LightMode/>
-                    <Switch onChange={e => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
+                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
                     <DarkMode/>
                 </ListItemButton>
             </ListItem>
@@ -100,7 +100,7 @@ export const Sidebar = (props) => {
                 open={mobileOpen}
                 onClose={handleDrawerToggle}
                 ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
+                    keepMounted: true,
                 }}
                 sx={{
                     display: {xs: 'block', sm: 'none'},

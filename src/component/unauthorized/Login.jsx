@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Lottie from 'lottie-react';
-import sign from '../assets/sign.json';
+import sign from '../../assets/sign.json';
 import {
     Avatar,
     Box,
@@ -18,10 +18,10 @@ import {
     Typography
 } from "@mui/material";
 import {DarkMode, LightMode, VpnKey} from "@mui/icons-material";
-import {theme} from "../theme";
-import {useLocalState} from "../util/useLocalStorage";
+import {theme} from "../../theme";
+import {useLocalState} from "../../util/useLocalStorage";
 import {Helmet} from 'react-helmet';
-import {useThemeStore} from "../util";
+import {useThemeStore} from "../../util";
 
 const paperStyle = {
     height: "70vh",
@@ -50,8 +50,6 @@ export function Login({theme}) {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const mode = useThemeStore(state => state.mode);
     const setMode = useThemeStore(state => state.setMode);
-
-    // const theme = useThemeStore(state => state.theme);
 
     function sendLoginRequest() {
         const reqBody = {
@@ -149,7 +147,7 @@ export function Login({theme}) {
                 </Paper>
                 <Stack direction="row" alignItems="center" justifyContent="center">
                     <LightMode/>
-                    <Switch onChange={e => setMode()} checked={mode === "dark"}/>
+                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
                     <DarkMode/>
                 </Stack>
             </Box>

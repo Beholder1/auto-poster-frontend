@@ -51,14 +51,14 @@ export const AddLocation = ({change, setChange}) => {
 
     return (
         <>
-            <Tooltip onClick={e => setOpen(true)} title={"Add"} sx={{position: "fixed", bottom: 20, right: 20}}>
+            <Tooltip onClick={() => setOpen(true)} title={"Add"} sx={{position: "fixed", bottom: 20, right: 20}}>
                 <Fab color={"primary"}>
                     <AddIcon/>
                 </Fab>
             </Tooltip>
             <StyledModal
                 open={open}
-                onClose={e => setOpen(false)}
+                onClose={() => setOpen(false)}
             >
                 <Box width={400} height={220} bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>

@@ -26,17 +26,23 @@ const StyledModal = styled(Modal)({
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
-})
+});
 
 export const ThirdScriptStep = () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [fetchImagesTrigger, setFetchImagesTrigger] = useState(false);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [selectedProducts, setSelectedProducts] = useState([]);
     const postsQuantity = usePostsQuantityStore(state => state.mode);
-    const [jwt, setJwt] = useLocalState("", "jwt")
+    const [jwt, setJwt] = useLocalState("", "jwt");
     const userId = jwtDecode(jwt).id;
-    const [urlParams, setUrlParams] = useSearchParams()
-    const {data: images, status: imageStatus} = useQuery('images', fetchImages)
-    const {data: products, status: productStatus} = useQuery('products', fetchProducts)
-
+    const [urlParams, setUrlParams] = useSearchParams();
+    const {data: images, status: imageStatus} = useQuery(
+        ['images', selectedProductId],
+        () => fetchImages(selectedProductId),
+        {enabled: fetchImagesTrigger}
+    );
+    const {data: products, status: productStatus} = useQuery('products', fetchProducts);
 
     async function fetchProducts() {
         return await ajax(`/api/products/${userId}/brief`, 'get', jwt);
@@ -47,12 +53,19 @@ export const ThirdScriptStep = () => {
     }
 
     if (productStatus === "loading") {
-        return <LoadingFetch/>
+        return <LoadingFetch/>;
     }
-    let fields = []
+
+    const handleProductChange = (index, value) => {
+        const updatedSelectedProducts = [...selectedProducts];
+        updatedSelectedProducts[index] = value ? value.id : null;
+        setSelectedProducts(updatedSelectedProducts);
+    };
+
+    let fields = [];
     for (let index = 0; index < postsQuantity; index++) {
         fields.push(
-            <Stack mt={2} key={index} direction={"row"}>
+            <Stack mt={2} key={index} direction="row">
                 <Autocomplete
                     sx={{width: "100%", marginRight: "10px"}}
                     defaultValue={urlParams.get(`product${index + 1}`) !== null
@@ -60,16 +73,26 @@ export const ThirdScriptStep = () => {
                         : null}
                     options={products.products}
                     getOptionLabel={(option) => option.name}
-                    onChange={(e, value) => setUrlParams(value != null ? `?${urlParams != null ? urlParams + '&' : ''}${new URLSearchParams(`product${index + 1}=${value.id}`)}` : () => {
-                        urlParams.delete(`product${index + 1}`)
-                        return urlParams
-                    })}
+                    onChange={(e, value) => {
+                        handleProductChange(index, value);
+                        setUrlParams(value != null ? `?${urlParams != null ? urlParams + '&' : ''}${new URLSearchParams(`product${index + 1}=${value.id}`)}` : () => {
+                            urlParams.delete(`product${index + 1}`);
+                            return urlParams;
+                        });
+                    }}
                     renderInput={(params) => <TextField required {...params} label={`Produkt ${index + 1}`}
                     />}></Autocomplete>
                 <TextField sx={{marginRight: "10px"}}></TextField>
-                <IconButton onClick={e => setOpen(true)}><ImageSearch/>
+                <IconButton
+                    onClick={() => {
+                        setSelectedProductId(selectedProducts[index]);
+                        setFetchImagesTrigger(true);
+                        setOpen(true);
+                    }}
+                    disabled={!selectedProducts[index]}
+                ><ImageSearch/>
                 </IconButton>
-            </Stack>)
+            </Stack>);
     }
 
     return (
@@ -78,34 +101,34 @@ export const ThirdScriptStep = () => {
 
             <StyledModal
                 open={open}
-                onClose={e => {
-                    setOpen(false)
+                onClose={() => {
+                    setOpen(false);
+                    setFetchImagesTrigger(false);
                 }}
             >
                 {imageStatus === "loading" ?
                     <LoadingFetch/>
                     :
-                <Box width="90%" bgcolor={"background.default"} color={"text.primary"} p={3}
-                     borderRadius={5} height={"90%"}>
-                    <Typography variant={"h6"} textAlign={"center"}>Dodaj produkt</Typography>
-                    <Stack sx={{flexDirection: {xs: 'column', sm: 'row'}}}>
-                        <ImageList sx={{width: {xs: '100%', sm: '50%'}, height: 520}} rowHeight={164} cols={3}>
-                            {images.images.map((item, i) => (
-                                <ImageListItem>
-                                    <img
-                                        src={`${URL.createObjectURL(item)}`}
-                                        srcSet={`${URL.createObjectURL(item)}`}
-                                        alt={item.name}
-                                    />
-                                    <ImageListItemBar
-                                        title={item.name}
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
-                    </Stack>
-                </Box>}
+                    <Box width="90%" bgcolor={"background.default"} color={"text.primary"} p={3}
+                         borderRadius={5} height={"90%"}>
+                        <Typography variant={"h6"} textAlign={"center"}>Dodaj produkt</Typography>
+                        <Stack sx={{flexDirection: {xs: 'column', sm: 'row'}}}>
+                            <ImageList sx={{width: {xs: '100%', sm: '50%'}, height: 520}} rowHeight={164} cols={3}>
+                                {images && images.images && images.images.map((item, i) => (
+                                    <ImageListItem key={i}>
+                                        <img
+                                            src={item.url}  // Assuming item.url is the image URL or base64 string
+                                            alt={item.name}
+                                        />
+                                        <ImageListItemBar
+                                            title={item.name}
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </Stack>
+                    </Box>}
             </StyledModal>
         </>
-    )
-}
+    );
+};
