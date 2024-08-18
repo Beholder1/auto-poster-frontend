@@ -1,7 +1,7 @@
 import React from "react";
 import {useTranslation} from 'react-i18next';
 import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch} from "@mui/material";
-import {DarkMode, Groups, Home, LightMode, LocationOn, Person, Sell, Settings} from "@mui/icons-material";
+import {DarkMode, Groups, Home, LightMode, LocationOn, Person, Refresh, Sell, Settings} from "@mui/icons-material";
 import {useThemeStore} from "../util";
 import Drawer from "@mui/material/Drawer";
 import {jwtDecode} from "jwt-decode";
@@ -32,6 +32,14 @@ export const Sidebar = (props) => {
                         <Home/>
                     </ListItemIcon>
                     <ListItemText primary="Strona główna"/>
+                </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+                <ListItemButton component="a" href={"/refresh"} selected={selectedIndex === 0}>
+                    <ListItemIcon>
+                        <Refresh/>
+                    </ListItemIcon>
+                    <ListItemText primary="Odświeżanie"/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

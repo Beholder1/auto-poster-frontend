@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Box, ThemeProvider} from "@mui/material";
-import {Navbar} from "./Navbar";
-import {Sidebar} from "./Sidebar";
+import {Navbar} from "../Navbar";
+import {Sidebar} from "../Sidebar";
 import {Feed} from "./Feed";
 import {Helmet} from "react-helmet";
 

@@ -10,9 +10,9 @@ import {FirstScriptStep} from "./FirstScriptStep";
 import {SecondScriptStep} from "./SecondScriptStep";
 import {ThirdScriptStep} from "./ThirdScriptStep";
 import {jwtDecode} from "jwt-decode";
-import {useLocalState} from "../util/useLocalStorage";
+import {useLocalState} from "../../util/useLocalStorage";
 import {useSearchParams} from "react-router-dom";
-import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
+import {useHideBeforeFriendsStore} from "../../util/storage";
 
 const steps = ['Wybierz ustawienia', 'Wybierz konta', 'Wybierz produkty'];
 
@@ -84,7 +84,7 @@ export default function ScriptStepper() {
             method: "POST",
             body: JSON.stringify(scriptBody)
         }).then((response) => {
-            if (response.status === 201) {
+            if (response.status === 200) {
                 return response.json();
             }
         });

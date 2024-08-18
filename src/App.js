@@ -7,7 +7,8 @@ import {createTheme} from "@mui/material";
 import {useThemeStore} from "./util";
 import {ForgotPassword} from "./component/unauthorized/ForgotPassword";
 import {PrivateRoute} from "./component/PrivateRoute";
-import {Homepage} from "./component/Homepage";
+import {Homepage} from "./component/main-script/Homepage";
+import {RefreshPage} from "./component/refresh-script/RefreshPage";
 import {AccountsPage} from "./component/accounts/AccountsPage";
 import {LocationsPage} from "./component/locations/LocationsPage";
 import {ProductsPage} from "./component/products/ProductsPage";
@@ -34,6 +35,8 @@ function App() {
             <Route path={"/register"} element={<Register theme={darkTheme}/>}/>
             <Route path={"/homepage"}
                    element={<PrivateRoute theme={darkTheme}><Homepage theme={darkTheme}/></PrivateRoute>}/>
+            <Route path={"/refresh"}
+                   element={<PrivateRoute theme={darkTheme}><RefreshPage theme={darkTheme}/></PrivateRoute>}/>
             <Route path={"/accounts"}
                    element={<PrivateRoute theme={darkTheme}><AccountsPage theme={darkTheme}/></PrivateRoute>}/>
             <Route path={"/locations"}

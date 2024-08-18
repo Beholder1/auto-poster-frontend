@@ -2,14 +2,14 @@ import {Autocomplete, Stack} from "@mui/material";
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import {useQuery} from "react-query";
-import {ajax} from "../util/fetchService";
-import {LoadingFetch} from "./LoadingFetch";
+import {ajax} from "../../util/fetchService";
+import {LoadingFetch} from "../LoadingFetch";
 import {jwtDecode} from "jwt-decode";
-import {useLocalState} from "../util/useLocalStorage";
-import {useAccountsQuantityStore} from "../util/accountsQuantityStore";
+import {useLocalState} from "../../util/useLocalStorage";
+import {useAccountsQuantityStore} from "../../util/storage";
 import {useSearchParams} from "react-router-dom";
 
-export const SecondScriptStep = () => {
+export const SecondRefreshScriptStep = () => {
     const accountsQuantity = useAccountsQuantityStore(state => state.mode);
     const setAccountsQuantity = useAccountsQuantityStore(state => state.setMode);
     const [jwt, setJwt] = useLocalState("", "jwt")

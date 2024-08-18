@@ -14,11 +14,11 @@ import * as React from "react";
 import {useState} from "react";
 import TextField from "@mui/material/TextField";
 import {useQuery} from "react-query";
-import {ajax} from "../util/fetchService";
-import {LoadingFetch} from "./LoadingFetch";
+import {ajax} from "../../util/fetchService";
+import {LoadingFetch} from "../LoadingFetch";
 import {jwtDecode} from "jwt-decode";
-import {useLocalState} from "../util/useLocalStorage";
-import {usePostsQuantityStore} from "../util/postsQuantityStore";
+import {useLocalState} from "../../util/useLocalStorage";
+import {usePostsQuantityStore} from "../../util/storage";
 import {useSearchParams} from "react-router-dom";
 import {ImageSearch} from "@mui/icons-material";
 
@@ -117,7 +117,7 @@ export const ThirdScriptStep = () => {
                                 {images && images.images && images.images.map((item, i) => (
                                     <ImageListItem key={i}>
                                         <img
-                                            src={item.url}  // Assuming item.url is the image URL or base64 string
+                                            src={`data:image/jpeg;base64,${item.url}`}
                                             alt={item.name}
                                         />
                                         <ImageListItemBar

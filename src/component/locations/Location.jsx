@@ -31,19 +31,21 @@ export const Location = ({location, change, setChange}) => {
             id: id,
             name: name
         }
-        fetch(`/api/locations/${userId}`, {
+        const response = fetch(`/api/locations/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
             method: "PUT",
             body: JSON.stringify(addMember)
-        }).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
         });
-        setChange(!change)
+
+        if (response.status === 200) {
+            setChange(!change)
+            return "Success";
+        } else {
+            return "Error";
+        }
     }
 
     return (

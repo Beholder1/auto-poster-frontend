@@ -1,11 +1,13 @@
 import React from "react";
 import {Checkbox, Stack, TextField, Typography} from "@mui/material";
 import {jwtDecode} from "jwt-decode";
-import {useLocalState} from "../util/useLocalStorage";
-import {useHideBeforeFriendsStore} from "../util/hideBeforeFriendsStore";
-import {useOneKindStore} from "../util/oneKindStore";
-import {useAccountsQuantityStore} from "../util/accountsQuantityStore";
-import {usePostsQuantityStore} from "../util/postsQuantityStore";
+import {useLocalState} from "../../util/useLocalStorage";
+import {
+    useAccountsQuantityStore,
+    useHideBeforeFriendsStore,
+    useOneKindStore,
+    usePostsQuantityStore
+} from "../../util/storage";
 
 const handleInputChange = (event, setter, maxValue = 100) => {
     let value = event.target.value;

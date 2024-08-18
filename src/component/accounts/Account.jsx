@@ -49,8 +49,8 @@ export const Account = ({account, change, setChange}) => {
         setChange(!change)
     }
 
-    const editGame = async () => {
-        const response = await fetch("api/games", {
+    const editAccount = async () => {
+        const response = await fetch("api/accounts", {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
@@ -101,11 +101,11 @@ export const Account = ({account, change, setChange}) => {
                 <Box bgcolor={"background.default"} color={"text.primary"} p={3}
                      borderRadius={5}>
                     <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Edit game name</Typography>
-                    <TextField label={"Game"} sx={{width: "100%", marginY: "20px"}} onChange={(event) => {
+                    <TextField label={"Konto"} sx={{width: "100%", marginY: "20px"}} onChange={(event) => {
                         setGameToUpdate({...gameToUpdate, name: event.target.value})
                     }}/>
                     <Button variant="contained" fullWidth type={"submit"} onClick={async () => {
-                        let response = await editGame()
+                        let response = await editAccount()
                         if (response === "Error") {
                             setOpenAlert(true)
                         } else {
