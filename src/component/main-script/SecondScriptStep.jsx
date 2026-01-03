@@ -20,7 +20,7 @@ export const SecondScriptStep = () => {
         return await ajax(`/api/accounts`, 'get', jwt);
     }
 
-    if (accountsStatus === "loading") {z
+    if (accountsStatus === "loading") {
         return <LoadingFetch/>
     }
     let fields = []
