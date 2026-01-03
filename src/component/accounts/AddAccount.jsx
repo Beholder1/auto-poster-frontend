@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import {Add as AddIcon} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
-import {jwtDecode} from "jwt-decode";
 
 const StyledModal = styled(Modal)({
     display: "flex",
@@ -27,7 +26,6 @@ export const AddAccount = () => {
     const [open, setOpen] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwtDecode(jwt).id;
     const [account, setAccount] = React.useState({
         name: "",
         email: "",
@@ -35,7 +33,7 @@ export const AddAccount = () => {
     });
 
     function createPost() {
-        fetch(`api/accounts/${userId}`, {
+        fetch(`api/accounts`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`

@@ -4,14 +4,12 @@ import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
 import {LoadingFetch} from "../LoadingFetch";
-import {jwtDecode} from "jwt-decode";
 import TextField from "@mui/material/TextField";
 import {Product} from "./Product";
 
 export const Products = () => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const [search, setSearch] = useState("");
-    const userId = jwtDecode(jwt).id;
     const [change, setChange] = useState(false)
     const [page, setPage] = useState(1);
 
@@ -24,7 +22,7 @@ export const Products = () => {
         if (search !== "") {
             addParam = "?name=" + search
         }
-        return await ajax(`/api/products/${userId}` + addParam, 'get', jwt);
+        return await ajax(`/api/products` + addParam, 'get', jwt);
     }
 
     const {data, status} = useQuery(['products', search, change, page], fetchProducts)

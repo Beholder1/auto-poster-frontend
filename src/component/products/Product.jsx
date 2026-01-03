@@ -21,7 +21,6 @@ import {
 } from "@mui/material";
 import {Delete, Edit, ImageSearch} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
-import {jwtDecode} from "jwt-decode";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
 import {useQuery, useQueryClient} from "react-query";
@@ -38,7 +37,6 @@ export const Product = ({product, change, setChange}) => {
     const queryClient = useQueryClient();
     const [jwt, setJwt] = useLocalState("", "jwt")
     const [selectedProductId, setSelectedProductId] = useState(null);
-    const userId = jwtDecode(jwt).id;
     const [openEditProduct, setOpenEditProduct] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false)
@@ -59,7 +57,7 @@ export const Product = ({product, change, setChange}) => {
     }
 
     function deleteProduct(id) {
-        fetch("api/products/" + userId + "/" + id, {
+        fetch("api/products/" + id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`

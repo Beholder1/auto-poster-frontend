@@ -2,17 +2,15 @@ import {Box, Button, Divider, IconButton, ListItem, Modal, TextField, Typography
 import {Delete, Edit} from "@mui/icons-material";
 import React, {useState} from "react";
 import {useLocalState} from "../../util/useLocalStorage";
-import {jwtDecode} from "jwt-decode";
 
 export const Location = ({location, change, setChange}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwtDecode(jwt).id;
     const [openEditLocation, setOpenEditLocation] = useState(false)
     const [locationId, setLocationId] = useState("")
     const [name, setName] = React.useState("");
 
     function deleteLocation(locationId) {
-        fetch("api/locations/" + userId + "/" + locationId, {
+        fetch("api/locations/" + locationId, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
@@ -31,7 +29,7 @@ export const Location = ({location, change, setChange}) => {
             id: id,
             name: name
         }
-        const response = fetch(`/api/locations/${userId}`, {
+        const response = fetch(`/api/locations`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`

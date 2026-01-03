@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
-import {jwtDecode} from "jwt-decode";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
 import {useQueryClient} from "react-query";
@@ -25,7 +24,6 @@ import {useQueryClient} from "react-query";
 export const Account = ({account, change, setChange}) => {
     const queryClient = useQueryClient();
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwtDecode(jwt).id;
     const [openEditGame, setOpenEditGame] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false)
@@ -35,7 +33,7 @@ export const Account = ({account, change, setChange}) => {
     });
 
     function deleteAccount(id) {
-        fetch(`api/accounts/${userId}/${id}`, {
+        fetch(`api/accounts/${id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`

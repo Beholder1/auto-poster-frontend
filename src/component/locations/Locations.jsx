@@ -4,14 +4,12 @@ import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
 import {LoadingFetch} from "../LoadingFetch";
-import {jwtDecode} from "jwt-decode";
 import TextField from "@mui/material/TextField";
 import {Location} from "./Location";
 
 export const Locations = ({change, setChange}) => {
     const [jwt, setJwt] = useLocalState("", "jwt")
     const [search, setSearch] = useState("");
-    const userId = jwtDecode(jwt).id;
     const [page, setPage] = React.useState(1);
 
 
@@ -20,7 +18,7 @@ export const Locations = ({change, setChange}) => {
         if (search !== "") {
             addParam = "&name=" + search
         }
-        return await ajax(`/api/locations/${userId}?page=${page - 1}` + addParam, 'get', jwt);
+        return await ajax(`/api/locations?page=${page - 1}` + addParam, 'get', jwt);
     }
 
     const {data, status} = useQuery(['locations', search, change, page], fetchLocations)

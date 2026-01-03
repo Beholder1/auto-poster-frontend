@@ -1,12 +1,10 @@
-import React from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../../util/useLocalStorage";
 import {useSearchParams} from "react-router-dom";
 import {FirstRefreshScriptStep} from "./FirstRefreshScriptStep";
@@ -19,7 +17,6 @@ export default function RefreshScriptStepper() {
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
     const [jwt, setJwt] = useLocalState("", "jwt");
-    const userId = jwtDecode(jwt).id;
     const [urlParams, setUrlParams] = useSearchParams();
     const refreshAllAccounts = useRefreshAllAccountsStore((state) => state.mode);
     const toFinish = useToFinishStore((state) => state.mode);
@@ -70,7 +67,7 @@ export default function RefreshScriptStepper() {
             allAccounts: refreshAllAccounts,
             refresh: toFinish
         };
-        fetch(`api/script/refresh/${userId}`, {
+        fetch(`api/script/refresh`, {
             headers: {
                 'Content-Type': 'application/JSON',
                 Authorization: `Bearer ${jwt}`,

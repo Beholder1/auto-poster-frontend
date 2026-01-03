@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import {FirstScriptStep} from "./FirstScriptStep";
 import {SecondScriptStep} from "./SecondScriptStep";
 import {ThirdScriptStep} from "./ThirdScriptStep";
-import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../../util/useLocalStorage";
 import {useSearchParams} from "react-router-dom";
 import {useHideBeforeFriendsStore} from "../../util/storage";
@@ -21,7 +20,6 @@ export default function ScriptStepper() {
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwtDecode(jwt).id;
     const [urlParams, setUrlParams] = useSearchParams()
 
     const isStepSkipped = (step) => {
@@ -76,7 +74,7 @@ export default function ScriptStepper() {
             productsWithImages: productIds,
             hideBeforeFriends: hideBeforeFriends
         }
-        fetch(`api/script/${userId}`, {
+        fetch(`api/script`, {
             headers: {
                 'Content-Type': 'application/JSON',
                 Authorization: `Bearer ${jwt}`

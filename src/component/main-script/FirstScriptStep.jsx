@@ -1,7 +1,5 @@
 import React from "react";
 import {Checkbox, Stack, TextField, Typography} from "@mui/material";
-import {jwtDecode} from "jwt-decode";
-import {useLocalState} from "../../util/useLocalStorage";
 import {
     useAccountsQuantityStore,
     useHideBeforeFriendsStore,
@@ -26,8 +24,6 @@ export const FirstScriptStep = () => {
     const setAccountsQuantity = useAccountsQuantityStore((state) => state.setMode);
     const postsQuantity = usePostsQuantityStore((state) => state.mode);
     const setPostsQuantity = usePostsQuantityStore((state) => state.setMode);
-    const [jwt, setJwt] = useLocalState("", "jwt");
-    const userId = jwtDecode(jwt).id;
 
     return (
         <>

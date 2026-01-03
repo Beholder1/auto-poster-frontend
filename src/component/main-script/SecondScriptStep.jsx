@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField";
 import {useQuery} from "react-query";
 import {ajax} from "../../util/fetchService";
 import {LoadingFetch} from "../LoadingFetch";
-import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../../util/useLocalStorage";
 import {useAccountsQuantityStore} from "../../util/storage";
 import {useSearchParams} from "react-router-dom";
@@ -13,16 +12,15 @@ export const SecondScriptStep = () => {
     const accountsQuantity = useAccountsQuantityStore(state => state.mode);
     const setAccountsQuantity = useAccountsQuantityStore(state => state.setMode);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const userId = jwtDecode(jwt).id;
     const {data: accounts, status: accountsStatus} = useQuery('accounts', fetchAccounts)
     const [urlParams, setUrlParams] = useSearchParams()
 
 
     async function fetchAccounts() {
-        return await ajax(`/api/accounts/${userId}`, 'get', jwt);
+        return await ajax(`/api/accounts`, 'get', jwt);
     }
 
-    if (accountsStatus === "loading") {
+    if (accountsStatus === "loading") {z
         return <LoadingFetch/>
     }
     let fields = []

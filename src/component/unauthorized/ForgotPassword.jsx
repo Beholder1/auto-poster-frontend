@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import {Avatar, Box, Button, Grid, Link, Paper, Stack, Switch, ThemeProvider, Typography} from "@mui/material";
 import {DarkMode, LightMode, MailOutlined} from "@mui/icons-material";
 import {theme} from "../../theme";
-import {useLocalState} from "../../util/useLocalStorage";
 import {Helmet} from 'react-helmet';
 import {useThemeStore} from "../../util";
 
@@ -30,7 +29,6 @@ const buttonStyle = {
 
 export function ForgotPassword({theme}) {
     const [email, setEmail] = useState("");
-    const [jwt, setJwt] = useLocalState("", "jwt")
     const mode = useThemeStore(state => state.mode);
     const setMode = useThemeStore(state => state.setMode);
 
@@ -65,10 +63,7 @@ export function ForgotPassword({theme}) {
 
     function validateEmail() {
         let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$/i;
-        if (!regex.test(email.replace(/\s/g, ''))) {
-            return false;
-        }
-        return true;
+        return regex.test(email.replace(/\s/g, ''));
     }
 
     return (

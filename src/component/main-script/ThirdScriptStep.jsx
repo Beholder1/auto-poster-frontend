@@ -16,7 +16,6 @@ import TextField from "@mui/material/TextField";
 import {useQuery} from "react-query";
 import {ajax} from "../../util/fetchService";
 import {LoadingFetch} from "../LoadingFetch";
-import {jwtDecode} from "jwt-decode";
 import {useLocalState} from "../../util/useLocalStorage";
 import {usePostsQuantityStore} from "../../util/storage";
 import {useSearchParams} from "react-router-dom";
@@ -35,7 +34,6 @@ export const ThirdScriptStep = () => {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const postsQuantity = usePostsQuantityStore(state => state.mode);
     const [jwt, setJwt] = useLocalState("", "jwt");
-    const userId = jwtDecode(jwt).id;
     const [urlParams, setUrlParams] = useSearchParams();
     const {data: images, status: imageStatus} = useQuery(
         ['images', selectedProductId],
@@ -45,7 +43,7 @@ export const ThirdScriptStep = () => {
     const {data: products, status: productStatus} = useQuery('products', fetchProducts);
 
     async function fetchProducts() {
-        return await ajax(`/api/products/${userId}/brief`, 'get', jwt);
+        return await ajax(`/api/products/brief`, 'get', jwt);
     }
 
     async function fetchImages(productId) {
