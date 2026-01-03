@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 
 import {
     Accordion,
@@ -13,133 +13,143 @@ import {
     Modal,
     Snackbar,
     Stack,
+    TextField,
     Typography
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TextField from "@mui/material/TextField";
-import {useQueryClient} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
+import {ajax} from "../../util/fetchService";
 
-export const Account = ({account, change, setChange}) => {
+export const Account = React.memo(({account, change, setChange}) => {
     const queryClient = useQueryClient();
-    const [jwt, setJwt] = useLocalState("", "jwt")
+    const [jwt] = useLocalState("", "jwt")
     const [openEditGame, setOpenEditGame] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
-    const [open, setOpen] = useState(false)
-    const [gameToUpdate, setGameToUpdate] = React.useState({
+    const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [gameToUpdate, setGameToUpdate] = useState({
         id: account.id,
         name: ""
     });
 
-    function deleteAccount(id) {
-        fetch(`api/accounts/${id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`
-            },
-            method: "DELETE",
-        }).then((response) => {
-            if (response.status === 200) {
-                return response.json();
+    const deleteMutation = useMutation(
+        (id) => ajax(`/api/accounts/${id}`, 'delete', jwt),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('accounts');
+                setChange(!change);
             }
-        });
-        setChange(!change)
-    }
-
-    const editAccount = async () => {
-        const response = await fetch("api/accounts", {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`
-            },
-            method: "PUT",
-            body: JSON.stringify(gameToUpdate)
-        });
-
-        if (response.status === 200) {
-            setChange(!change)
-            return "Success";
-        } else {
-            return "Error";
         }
-    }
+    );
+
+    const editMutation = useMutation(
+        (data) => ajax(`/api/accounts`, 'put', jwt, data),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('accounts');
+                setChange(!change);
+                setOpenEditGame(false);
+                setGameToUpdate(prev => ({...prev, name: ""}));
+            },
+            onError: () => {
+                setOpenAlert(true);
+            }
+        }
+    );
+
+    const handleDelete = useCallback(() => {
+        deleteMutation.mutate(account.id);
+        setOpenDeleteModal(false);
+    }, [account.id, deleteMutation]);
+
+    const handleEditSave = useCallback(() => {
+        editMutation.mutate(gameToUpdate);
+    }, [gameToUpdate, editMutation]);
+
+    const handleEditChange = useCallback((event) => {
+        setGameToUpdate(prev => ({...prev, name: event.target.value}));
+    }, []);
 
     return (
         <>
             <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon/>}>
-                    <ListItem>
-                        <Typography sx={{width: "100%"}}>{account.name}</Typography>
-                        <IconButton onClick={() => {
-                            setOpenEditGame(true)
-                        }
-                        }><Edit/></IconButton>
-                        <IconButton onClick={() => setOpen(true)}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                    <ListItem sx={{p: 0}}>
+                        <Typography sx={{flexGrow: 1}}>{account.name}</Typography>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenEditGame(true);
+                        }}><Edit/></IconButton>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenDeleteModal(true);
+                        }}>
                             <Delete color={"error"}/>
                         </IconButton>
                     </ListItem>
                 </AccordionSummary>
                 <Divider/>
                 <AccordionDetails>
-                    <Typography>Email: {account.email}</Typography>
+                    <Typography variant="body2" color="text.secondary">Email: {account.email}</Typography>
                     <Divider sx={{marginY: "8px"}}/>
-                    <Typography>Hasło: {account.password}</Typography>
+                    <Typography variant="body2" color="text.secondary">Hasło: {account.password}</Typography>
                 </AccordionDetails>
             </Accordion>
+            
             <Modal
                 open={openEditGame}
-                onClose={() => setOpenEditGame(false)} sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-            }}
+                onClose={() => setOpenEditGame(false)} 
+                sx={{display: "flex", alignItems: "center", justifyContent: "center"}}
             >
-                <Box bgcolor={"background.default"} color={"text.primary"} p={3}
-                     borderRadius={5}>
+                <Box bgcolor={"background.default"} color={"text.primary"} p={3} borderRadius={5} sx={{width: 400}}>
                     <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Edit game name</Typography>
-                    <TextField label={"Konto"} sx={{width: "100%", marginY: "20px"}} onChange={(event) => {
-                        setGameToUpdate({...gameToUpdate, name: event.target.value})
-                    }}/>
-                    <Button variant="contained" fullWidth type={"submit"} onClick={async () => {
-                        let response = await editAccount()
-                        if (response === "Error") {
-                            setOpenAlert(true)
-                        } else {
-                            setOpenEditGame(false)
-                            setGameToUpdate({...gameToUpdate, name: ""});
-                        }
-                    }}>Save</Button>
+                    <TextField 
+                        label={"Konto"} 
+                        sx={{width: "100%", marginY: "20px"}} 
+                        value={gameToUpdate.name}
+                        onChange={handleEditChange}
+                    />
+                    <Button 
+                        variant="contained" 
+                        fullWidth 
+                        onClick={handleEditSave}
+                        disabled={editMutation.isLoading}
+                    >
+                        {editMutation.isLoading ? "Saving..." : "Save"}
+                    </Button>
                 </Box>
             </Modal>
+
             <Modal
-                open={open}
-                onClose={() => setOpen(false)} sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-            }}
+                open={openDeleteModal}
+                onClose={() => setOpenDeleteModal(false)} 
+                sx={{display: "flex", alignItems: "center", justifyContent: "center"}}
             >
-                <Box bgcolor={"background.default"} color={"text.primary"} p={3}
-                     borderRadius={5}>
-                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>Czy na pewno chcesz usunąć to
-                        konto?</Typography>
-                    <Stack direction={"row"}>
-                        <Button variant="text" fullWidth type={"submit"} onClick={() => setOpen(false)}>No</Button>
-                        <Button variant="text" fullWidth type={"submit"} onClick={() => {
-                            queryClient.invalidateQueries('accounts')
-                            deleteAccount(account.id)
-                            setOpen(false)
-                        }}>Yes</Button>
+                <Box bgcolor={"background.default"} color={"text.primary"} p={3} borderRadius={5}>
+                    <Typography variant={"h6"} textAlign={"center"} marginBottom={"5px"}>
+                        Czy na pewno chcesz usunąć to konto?
+                    </Typography>
+                    <Stack direction={"row"} spacing={2} sx={{mt: 2}}>
+                        <Button variant="outlined" fullWidth onClick={() => setOpenDeleteModal(false)}>No</Button>
+                        <Button 
+                            variant="contained" 
+                            color="error" 
+                            fullWidth 
+                            onClick={handleDelete}
+                            disabled={deleteMutation.isLoading}
+                        >
+                            Yes
+                        </Button>
                     </Stack>
                 </Box>
             </Modal>
+
             <Snackbar open={openAlert} autoHideDuration={4000} onClose={() => setOpenAlert(false)}>
                 <Alert onClose={() => setOpenAlert(false)} severity="error" sx={{width: '100%'}}>
-                    Game already exists!
+                    Error updating account!
                 </Alert>
             </Snackbar>
         </>
     )
-}
+});

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {
     AppBar,
     Avatar,
@@ -30,36 +30,57 @@ const Icons = styled(Box)(() => ({
 
 
 export const Navbar = ({mobileOpen, setMobileOpen}) => {
-    const [jwt, setJwt] = useLocalState("", "jwt")
-    const username = jwtDecode(jwt).username;
+    const [jwt] = useLocalState("", "jwt")
+    const username = useMemo(() => {
+        try {
+            return jwt ? jwtDecode(jwt).username : "";
+        } catch (e) {
+            return "";
+        }
+    }, [jwt]);
+
     const [anchorProfile, setAnchorProfile] = useState(null);
     const openProfile = Boolean(anchorProfile);
     const [anchorNotification, setAnchorNotification] = useState(null);
     const openNotification = Boolean(anchorNotification);
 
-    async function logout() {
+    const logout = useCallback(async () => {
         return await ajax(`/user/logout`, 'put', jwt);
-    }
+    }, [jwt]);
 
-    const handleProfileClick = (event) => {
+    const handleProfileClick = useCallback((event) => {
         setAnchorProfile(event.currentTarget);
-    };
-    const handleProfileClose = () => {
-        setAnchorProfile(null);
-    };
-    const handleNotificationClick = (event) => {
-        setAnchorNotification(event.currentTarget);
-    };
-    const handleNotificationClose = () => {
-        setAnchorNotification(null);
-    };
+    }, []);
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    const handleProfileClose = useCallback(() => {
+        setAnchorProfile(null);
+    }, []);
+
+    const handleNotificationClick = useCallback((event) => {
+        setAnchorNotification(event.currentTarget);
+    }, []);
+
+    const handleNotificationClose = useCallback(() => {
+        setAnchorNotification(null);
+    }, []);
+
+    const handleDrawerToggle = useCallback(() => {
+        setMobileOpen(prev => !prev);
+    }, [setMobileOpen]);
+
+    const handleLogoutClick = useCallback(() => {
+        logout().finally(() => {
+            localStorage.removeItem("jwt");
+            window.location.href = '/login';
+        });
+    }, [logout]);
+
+    const handleRecommendedClick = useCallback(() => {
+        window.location.href = '/recommended';
+    }, []);
 
     return (
-        <AppBar position={"sticky"} color={"primary"} sx={{backgroundColor: "#ff7420"}}>
+        <AppBar position={"sticky"} sx={{backgroundColor: "primary.main"}}>
             <StyledToolbar>
                 <IconButton
                     color="inherit"
@@ -72,8 +93,8 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 </IconButton>
                 <Typography variant="h6" sx={{display: {xs: "none", sm: "block"}}}>Site name</Typography>
                 <Icons>
-                    <Avatar sx={{width: 30, height: 30, bgcolor: "red"}}
-                            onClick={handleProfileClick}>{username[0]}</Avatar>
+                    <Avatar sx={{width: 30, height: 30, bgcolor: "red", cursor: "pointer"}}
+                            onClick={handleProfileClick}>{username ? username[0].toUpperCase() : "?"}</Avatar>
                 </Icons>
             </StyledToolbar>
             <Menu
@@ -114,11 +135,7 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 transformOrigin={{horizontal: 'right', vertical: 'top'}}
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
             >
-                <MenuItem onClick={() => {
-                    logout()
-                    localStorage.removeItem("jwt")
-                    window.location.href = '/login';
-                }}>
+                <MenuItem onClick={handleLogoutClick}>
                     <ListItemIcon>
                         <Logout fontSize="small"/>
                     </ListItemIcon>
@@ -128,7 +145,7 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
             <Menu
                 disableScrollLock={true}
                 anchorEl={anchorNotification}
-                id="account-menu"
+                id="notification-menu"
                 open={openNotification}
                 onClose={handleNotificationClose}
                 onClick={handleNotificationClose}
@@ -163,9 +180,7 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 transformOrigin={{horizontal: 'right', vertical: 'top'}}
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
             >
-                <MenuItem sx={{display: "flex", flexDirection: "column"}} onClick={() => {
-                    window.location.href = '/recommended';
-                }}>
+                <MenuItem sx={{display: "flex", flexDirection: "column"}} onClick={handleRecommendedClick}>
                     <Typography>New recommended posts</Typography>
                     <Typography>appeared since your last login!</Typography>
                     <Typography>Click here, to show them.</Typography>

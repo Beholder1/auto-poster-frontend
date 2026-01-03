@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,41 +11,30 @@ import {ThirdScriptStep} from "./ThirdScriptStep";
 import {useLocalState} from "../../util/useLocalStorage";
 import {useSearchParams} from "react-router-dom";
 import {useHideBeforeFriendsStore} from "../../util/storage";
+import {ajax} from "../../util/fetchService";
 
 const steps = ['Wybierz ustawienia', 'Wybierz konta', 'Wybierz produkty'];
 
 export default function ScriptStepper() {
     const hideBeforeFriends = useHideBeforeFriendsStore(state => state.mode);
     const [activeStep, setActiveStep] = useState(0);
-    const [skipped, setSkipped] = useState(new Set());
-    const [jwt, setJwt] = useLocalState("", "jwt")
-    const [urlParams, setUrlParams] = useSearchParams()
+    const [jwt] = useLocalState("", "jwt")
+    const [urlParams] = useSearchParams()
 
-    const isStepSkipped = (step) => {
-        return skipped.has(step);
-    };
-
-    const handleNext = () => {
-        let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
-        }
-
+    const handleNext = useCallback(() => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
-    };
+    }, []);
 
-    const handleBack = () => {
+    const handleBack = useCallback(() => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
+    }, []);
 
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
         setActiveStep(0);
-    };
+    }, []);
 
-    const pickStep = (step) => {
-        switch (step) {
+    const currentStepContent = useMemo(() => {
+        switch (activeStep) {
             case 0:
                 return <FirstScriptStep/>;
             case 1:
@@ -54,11 +42,11 @@ export default function ScriptStepper() {
             case 2:
                 return <ThirdScriptStep/>;
             default:
-                break;
+                return null;
         }
-    }
+    }, [activeStep]);
 
-    function runScript() {
+    const runScript = useCallback(async () => {
         let accountIds = []
         let productIds = []
         urlParams.forEach((v, k) => {
@@ -74,49 +62,37 @@ export default function ScriptStepper() {
             productsWithImages: productIds,
             hideBeforeFriends: hideBeforeFriends
         }
-        fetch(`api/script`, {
-            headers: {
-                'Content-Type': 'application/JSON',
-                Authorization: `Bearer ${jwt}`
-            },
-            method: "POST",
-            body: JSON.stringify(scriptBody)
-        }).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-        });
-    }
+        
+        try {
+            await ajax(`api/script`, 'POST', jwt, scriptBody);
+            handleNext();
+        } catch (e) {
+            console.error("Failed to run script:", e);
+        }
+    }, [jwt, urlParams, hideBeforeFriends, handleNext]);
 
     return (
         <Box sx={{width: '100%'}}>
             <Stepper activeStep={activeStep}>
-                {steps.map((label, index) => {
-                    const stepProps = {};
-                    const labelProps = {};
-                    if (isStepSkipped(index)) {
-                        stepProps.completed = false;
-                    }
-                    return (
-                        <Step key={label} {...stepProps}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
-                        </Step>
-                    );
-                })}
+                {steps.map((label) => (
+                    <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                    </Step>
+                ))}
             </Stepper>
             {activeStep === steps.length ? (
                 <>
                     <Typography sx={{mt: 2, mb: 1}}>
-                        All steps completed - you&apos;re finished
+                        Wszystkie kroki zakończone - skrypt został uruchomiony!
                     </Typography>
                     <Box sx={{display: 'flex', flexDirection: 'row', pt: 2}}>
                         <Box sx={{flex: '1 1 auto'}}/>
-                        <Button onClick={handleReset}>Reset</Button>
+                        <Button onClick={handleReset}>Resetuj</Button>
                     </Box>
                 </>
             ) : (
                 <>
-                    {pickStep(activeStep)}
+                    {currentStepContent}
                     <Box sx={{display: 'flex', flexDirection: 'row', pt: 2}}>
                         <Button
                             disabled={activeStep === 0}
@@ -128,7 +104,7 @@ export default function ScriptStepper() {
                         <Box sx={{flex: '1 1 auto'}}/>
 
                         <Button
-                            onClick={activeStep === steps.length - 1 ? () => runScript() : () => handleNext()}>
+                            onClick={activeStep === steps.length - 1 ? runScript : handleNext}>
                             {activeStep === steps.length - 1 ? 'Uruchom' : 'Dalej'}
                         </Button>
                     </Box>

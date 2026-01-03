@@ -1,7 +1,7 @@
 export function ajax(url, requestMethod, jwt, requestBody) {
     const fetchData = {
         headers: {
-            "Content-type": "application.json"
+            "Content-type": "application/json"
         },
         method: requestMethod
     };
@@ -15,6 +15,19 @@ export function ajax(url, requestMethod, jwt, requestBody) {
     }
 
     return fetch(url, fetchData).then((response) => {
-        if (response.status === 200) return response.json();
+        if (response.status === 200) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json();
+            } else {
+                return response.text();
+            }
+        } else if (response.status === 401 || response.status === 403) {
+            // localStorage.removeItem("jwt");
+            // window.location.href = "/login";
+            return Promise.reject("Unauthorized");
+        } else {
+            return Promise.reject(response.status);
+        }
     })
 }

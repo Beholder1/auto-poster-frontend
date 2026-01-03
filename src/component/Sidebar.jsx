@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useMemo} from "react";
 import {useTranslation} from 'react-i18next';
 import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch} from "@mui/material";
 import {DarkMode, Groups, Home, LightMode, LocationOn, Person, Refresh, Sell, Settings} from "@mui/icons-material";
@@ -9,25 +9,32 @@ import {useLocalState} from "../util/useLocalStorage";
 
 const drawerWidth = 240;
 
-export const Sidebar = (props) => {
-    const {mobileOpen} = props;
-    const {setMobileOpen} = props;
+export const Sidebar = ({mobileOpen, setMobileOpen}) => {
     const {t} = useTranslation();
     const mode = useThemeStore(state => state.mode);
     const setMode = useThemeStore(state => state.setMode);
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
-    const [jwt, setJwt] = useLocalState("", "jwt")
-    const userRole = jwtDecode(jwt).roles[0]
+    const [jwt] = useLocalState("", "jwt")
+    
+    const userRole = useMemo(() => {
+        try {
+            return jwt ? jwtDecode(jwt).roles[0] : "";
+        } catch (e) {
+            return "";
+        }
+    }, [jwt]);
 
+    const handleDrawerToggle = useCallback(() => {
+        setMobileOpen(prev => !prev);
+    }, [setMobileOpen]);
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    const handleModeToggle = useCallback(() => {
+        setMode(mode === "light" ? "dark" : "light");
+    }, [mode, setMode]);
 
-    const drawer = (
+    const drawer = useMemo(() => (
         <List>
             <ListItem disablePadding>
-                <ListItemButton component="a" href={"/homepage"} selected={selectedIndex === 0}>
+                <ListItemButton component="a" href={"/homepage"}>
                     <ListItemIcon>
                         <Home/>
                     </ListItemIcon>
@@ -35,7 +42,7 @@ export const Sidebar = (props) => {
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton component="a" href={"/refresh"} selected={selectedIndex === 0}>
+                <ListItemButton component="a" href={"/refresh"}>
                     <ListItemIcon>
                         <Refresh/>
                     </ListItemIcon>
@@ -67,7 +74,7 @@ export const Sidebar = (props) => {
                 </ListItemButton>
             </ListItem>
             <Divider/>
-            {userRole === "admin" ?
+            {userRole === "admin" && (
                 <>
                     <ListItem disablePadding>
                         <ListItemButton component="a" href="/users">
@@ -78,8 +85,8 @@ export const Sidebar = (props) => {
                         </ListItemButton>
                     </ListItem>
                     <Divider/>
-                </> : <></>
-            }
+                </>
+            )}
             <ListItem disablePadding>
                 <ListItemButton component="a" href="/settings">
                     <ListItemIcon>
@@ -91,13 +98,12 @@ export const Sidebar = (props) => {
             <ListItem disablePadding>
                 <ListItemButton>
                     <LightMode/>
-                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
+                    <Switch onChange={handleModeToggle} checked={mode === "dark"}/>
                     <DarkMode/>
                 </ListItemButton>
             </ListItem>
         </List>
-
-    );
+    ), [userRole, mode, handleModeToggle]);
 
     return (
         <Box

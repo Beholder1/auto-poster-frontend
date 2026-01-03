@@ -1,56 +1,57 @@
-import React, {useState} from "react";
-import {Box, List, Pagination} from "@mui/material";
+import React, {useCallback, useState} from "react";
+import {Box, List, Pagination, TextField} from "@mui/material";
 import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
 import {useQuery} from "react-query";
 import {LoadingFetch} from "../LoadingFetch";
-import TextField from "@mui/material/TextField";
 import {Product} from "./Product";
+import {useDebounce} from "../../util/useDebounce";
 
 export const Products = () => {
-    const [jwt, setJwt] = useLocalState("", "jwt")
+    const [jwt] = useLocalState("", "jwt")
     const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 500);
     const [change, setChange] = useState(false)
     const [page, setPage] = useState(1);
 
-    const handleChange = (event, value) => {
+    const handlePageChange = useCallback((event, value) => {
         setPage(value);
-    };
+    }, []);
 
-    async function fetchProducts() {
+    const fetchProducts = useCallback(async () => {
         let addParam = "";
-        if (search !== "") {
-            addParam = "?name=" + search
+        if (debouncedSearch !== "") {
+            addParam = "?name=" + encodeURIComponent(debouncedSearch)
         }
         return await ajax(`/api/products` + addParam, 'get', jwt);
-    }
+    }, [jwt, debouncedSearch]);
 
-    const {data, status} = useQuery(['products', search, change, page], fetchProducts)
+    const {data, status} = useQuery(['products', debouncedSearch, change, page], fetchProducts, {
+        keepPreviousData: true,
+        staleTime: 5000
+    });
+
+    const handleSearchChange = useCallback((event) => {
+        setSearch(event.target.value);
+        setPage(1);
+    }, []);
 
     return (
         <Box sx={{width: "100%", height: "calc(100vh - 64px)", display: "flex", flexDirection: "column"}}>
             <TextField sx={{margin: "20px", width: "calc(100% - 40px)"}}
                        label={"Search"}
                        value={search}
-                       onChange={(event) => {
-                           setSearch(event.target.value)
-                       }}/>
+                       onChange={handleSearchChange}/>
             {status === "loading" ? <LoadingFetch/> :
-                <Box p={2} sx={{
-                    // width: "100%",
-                    // overflow: "auto",
-                    // height: "100%",
-                    // display: "flex",
-                    // flexWrap: "wrap"
-                }}>
+                <Box p={2}>
                     <List sx={{height: "100%"}}>
-                        {data.products.map((product) => (
-                            <React.Fragment key={product.id}>
-                                <Product product={product} change={change} setChange={setChange}/>
-                            </React.Fragment>
+                        {data?.products?.map((product) => (
+                            <Product key={product.id} product={product} change={change} setChange={setChange}/>
                         ))}
                     </List>
-                    <Pagination page={page} onChange={handleChange} count={data.pages}/>
+                    {data?.pages > 1 && (
+                        <Pagination page={page} onChange={handlePageChange} count={data.pages}/>
+                    )}
                 </Box>}
         </Box>
     )

@@ -1,21 +1,19 @@
-import {Avatar, Box, Button, Grid, Link, Paper, Stack, Switch, ThemeProvider, Typography} from "@mui/material";
+import {Avatar, Box, Button, Grid, Link, Paper, Stack, Switch, Typography} from "@mui/material";
 import {DarkMode, LightMode, VpnKey} from "@mui/icons-material";
 import TextField from "@mui/material/TextField";
-import {theme} from "../../theme";
 import * as React from "react";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {Helmet} from 'react-helmet';
 import {useThemeStore} from "../../util";
 
 const paperStyle = {
-    height: "70vh",
     padding: "30px 20px",
-    width: 300,
+    width: 350,
     margin: "20px auto"
 }
 
 const avatarStyle = {
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: "#15c630"
 }
 
 const textFieldStyle = {
@@ -27,60 +25,80 @@ const buttonStyle = {
     marginBottom: "10px"
 }
 
-export function Register({theme}) {
+export function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const mode = useThemeStore(state => state.mode);
     const setMode = useThemeStore(state => state.setMode);
 
-    // const theme = useThemeStore(state => state.theme);
+    const validateEmail = useCallback(() => {
+        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$/i;
+        return regex.test(email.trim());
+    }, [email]);
 
-    function sendRegisterRequest() {
+    const sendRegisterRequest = useCallback(async () => {
         const reqBody = {
             email: email,
             password: password
         };
 
-        fetch("api/auth/register", {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            method: "post",
-            body: JSON.stringify(reqBody)
-        }).then((response) => {
+        try {
+            const response = await fetch("api/auth/register", {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                body: JSON.stringify(reqBody)
+            });
+
             if (response.status === 200) {
                 alert("Confirmation email sent");
-                return Promise.all([response.json(), response.headers]);
             } else {
-                alert("User already exists")
+                alert("User already exists");
             }
-        })
-    }
-
-    const handleKeypress = e => {
-        if (e.keyCode === 13) {
-            sendRegisterRequest();
+        } catch (error) {
+            console.error("Registration error:", error);
+            alert("An error occurred during registration.");
         }
-    };
+    }, [email, password]);
 
-    function validateEmail() {
-        let regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+$/i;
-        return regex.test(email.replace(/\s/g, ''));
+    const handleRegisterClick = useCallback(() => {
+        if (password !== repeatPassword) {
+            alert("Passwords are not the same");
+            return;
+        }
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long!");
+            return;
+        }
+        if (!validateEmail()) {
+            alert("Email address is incorrect!");
+            return;
+        }
+        sendRegisterRequest();
+    }, [password, repeatPassword, validateEmail, sendRegisterRequest]);
 
-    }
+    const handleKeypress = useCallback(e => {
+        if (e.key === 'Enter') {
+            handleRegisterClick();
+        }
+    }, [handleRegisterClick]);
+
+    const handleModeToggle = useCallback(() => {
+        setMode(mode === "light" ? "dark" : "light");
+    }, [mode, setMode]);
 
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <Helmet>
                 <title>Sign up</title>
             </Helmet>
-            <Box height="100vh" display="flex" flexDirection="column" bgcolor={"background.default"}
-                 color={"text.primary"}>
-                <Paper elevation={3} style={paperStyle}>
+            <Box minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" bgcolor={"background.default"} color={"text.primary"}>
+                <Paper elevation={3} sx={paperStyle}>
                     <Grid align={"center"}>
                         <Avatar style={avatarStyle}><VpnKey/></Avatar>
-                        <h2>Sign up</h2>
+                        <Typography variant="h5" component="h2" sx={{ my: 2 }}>Sign up</Typography>
                     </Grid>
                     <TextField
                         required
@@ -114,23 +132,14 @@ export function Register({theme}) {
                         type={"password"}
                         onKeyDown={handleKeypress}
                     />
-                    <Button variant="contained" fullWidth type={"submit"} style={buttonStyle}
-                            onClick={() => {
-                                if (password === repeatPassword) {
-                                    if (password.length < 8) {
-                                        alert("Password must be at least 8 characters long!")
-                                    } else {
-                                        let valid = validateEmail();
-                                        if (valid) {
-                                            sendRegisterRequest()
-                                        } else {
-                                            alert("Email address is incorrect!")
-                                        }
-                                    }
-                                } else {
-                                    alert("Passwords are not the same")
-                                }
-                            }}>Sign up</Button>
+                    <Button 
+                        variant="contained" 
+                        fullWidth 
+                        style={buttonStyle}
+                        onClick={handleRegisterClick}
+                    >
+                        Sign up
+                    </Button>
                     <Typography>
                         <Link href={"/forgot-password"}>
                             Forgot password?
@@ -142,12 +151,12 @@ export function Register({theme}) {
                         </Link>
                     </Typography>
                 </Paper>
-                <Stack direction="row" alignItems="center" justifyContent="center">
+                <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mt: 2 }}>
                     <LightMode/>
-                    <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} checked={mode === "dark"}/>
+                    <Switch onChange={handleModeToggle} checked={mode === "dark"}/>
                     <DarkMode/>
                 </Stack>
             </Box>
-        </ThemeProvider>
+        </>
     );
 }
