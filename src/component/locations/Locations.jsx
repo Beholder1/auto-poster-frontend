@@ -2,7 +2,7 @@ import React, {useCallback, useState} from "react";
 import {Box, Divider, List, Pagination, TextField} from "@mui/material";
 import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
-import {useQuery} from "react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {LoadingFetch} from "../LoadingFetch";
 import {Location} from "./Location";
 import {useDebounce} from "../../util/useDebounce";
@@ -21,8 +21,10 @@ export const Locations = ({change, setChange}) => {
         return await ajax(`/api/locations?page=${page - 1}` + addParam, 'get', jwt);
     }, [jwt, page, debouncedSearch]);
 
-    const {data, status} = useQuery(['locations', debouncedSearch, change, page], fetchLocations, {
-        keepPreviousData: true,
+    const { data, status } = useQuery({
+        queryKey: ['locations', debouncedSearch, change, page],
+        queryFn: fetchLocations,
+        placeholderData: keepPreviousData,
         staleTime: 5000
     });
 
@@ -41,7 +43,7 @@ export const Locations = ({change, setChange}) => {
                        label={"Search"}
                        value={search}
                        onChange={handleSearchChange}/>
-            {status === "loading" ? <LoadingFetch/> :
+            {status === "pending" ? <LoadingFetch/> :
                 <Box p={2}>
                     <Divider/>
                     <List sx={{height: "100%"}}>

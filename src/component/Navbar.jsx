@@ -11,11 +11,12 @@ import {
     Toolbar,
     Typography
 } from "@mui/material";
-import {Logout} from "@mui/icons-material";
+import {Language, Logout} from "@mui/icons-material";
 import {useLocalState} from "../util/useLocalStorage";
 import {jwtDecode} from "jwt-decode";
 import MenuIcon from "@mui/icons-material/Menu";
 import {ajax} from "../util/fetchService";
+import {useTranslation} from "react-i18next";
 
 const StyledToolbar = styled(Toolbar)({
     display: "flex",
@@ -30,6 +31,7 @@ const Icons = styled(Box)(() => ({
 
 
 export const Navbar = ({mobileOpen, setMobileOpen}) => {
+    const {i18n} = useTranslation();
     const [jwt] = useLocalState("", "jwt")
     const username = useMemo(() => {
         try {
@@ -43,6 +45,8 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
     const openProfile = Boolean(anchorProfile);
     const [anchorNotification, setAnchorNotification] = useState(null);
     const openNotification = Boolean(anchorNotification);
+    const [anchorLanguage, setAnchorLanguage] = useState(null);
+    const openLanguage = Boolean(anchorLanguage);
 
     const logout = useCallback(async () => {
         return await ajax(`/user/logout`, 'put', jwt);
@@ -55,6 +59,20 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
     const handleProfileClose = useCallback(() => {
         setAnchorProfile(null);
     }, []);
+
+    const handleLanguageClick = useCallback((event) => {
+        setAnchorLanguage(event.currentTarget);
+    }, []);
+
+    const handleLanguageClose = useCallback(() => {
+        setAnchorLanguage(null);
+    }, []);
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+        localStorage.setItem("lang", lng);
+        handleLanguageClose();
+    };
 
     const handleNotificationClick = useCallback((event) => {
         setAnchorNotification(event.currentTarget);
@@ -93,10 +111,58 @@ export const Navbar = ({mobileOpen, setMobileOpen}) => {
                 </IconButton>
                 <Typography variant="h6" sx={{display: {xs: "none", sm: "block"}}}>Site name</Typography>
                 <Icons>
+                    <IconButton color="inherit" onClick={handleLanguageClick}>
+                        <Language />
+                    </IconButton>
                     <Avatar sx={{width: 30, height: 30, bgcolor: "red", cursor: "pointer"}}
                             onClick={handleProfileClick}>{username ? username[0].toUpperCase() : "?"}</Avatar>
                 </Icons>
             </StyledToolbar>
+            <Menu
+                disableScrollLock={true}
+                anchorEl={anchorLanguage}
+                id="language-menu"
+                open={openLanguage}
+                onClose={handleLanguageClose}
+                onClick={handleLanguageClose}
+                slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&:before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    },
+                }}
+                transformOrigin={{horizontal: 'right', vertical: 'top'}}
+                anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+            >
+                <MenuItem onClick={() => changeLanguage('en')}>
+                    English
+                </MenuItem>
+                <MenuItem onClick={() => changeLanguage('pl')}>
+                    Polski
+                </MenuItem>
+            </Menu>
             <Menu
                 disableScrollLock={true}
                 anchorEl={anchorProfile}

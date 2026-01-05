@@ -1,7 +1,7 @@
 import {Autocomplete, Stack} from "@mui/material";
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import {ajax} from "../../util/fetchService";
 import {LoadingFetch} from "../LoadingFetch";
 import {useLocalState} from "../../util/useLocalStorage";
@@ -12,7 +12,10 @@ export const SecondRefreshScriptStep = () => {
     const accountsQuantity = useAccountsQuantityStore(state => state.mode);
     const setAccountsQuantity = useAccountsQuantityStore(state => state.setMode);
     const [jwt, setJwt] = useLocalState("", "jwt")
-    const {data: accounts, status: accountsStatus} = useQuery('accounts', fetchAccounts)
+    const { data: accounts, status: accountsStatus } = useQuery({
+        queryKey: ['accounts'],
+        queryFn: fetchAccounts
+    });
     const [urlParams, setUrlParams] = useSearchParams()
 
 
@@ -20,7 +23,7 @@ export const SecondRefreshScriptStep = () => {
         return await ajax(`/api/accounts`, 'get', jwt);
     }
 
-    if (accountsStatus === "loading") {
+    if (accountsStatus === "pending") {
         return <LoadingFetch/>
     }
     let fields = []

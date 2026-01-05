@@ -13,7 +13,7 @@ import {
 import * as React from "react";
 import {useState} from "react";
 import TextField from "@mui/material/TextField";
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import {ajax} from "../../util/fetchService";
 import {LoadingFetch} from "../LoadingFetch";
 import {useLocalState} from "../../util/useLocalStorage";
@@ -35,11 +35,11 @@ export const ThirdScriptStep = () => {
     const postsQuantity = usePostsQuantityStore(state => state.mode);
     const [jwt, setJwt] = useLocalState("", "jwt");
     const [urlParams, setUrlParams] = useSearchParams();
-    const {data: images, status: imageStatus} = useQuery(
-        ['images', selectedProductId],
-        () => fetchImages(selectedProductId),
-        {enabled: fetchImagesTrigger}
-    );
+    const { data: images, status: imageStatus } = useQuery({
+        queryKey: ['images', selectedProductId],
+        queryFn: () => fetchImages(selectedProductId),
+        enabled: !!fetchImagesTrigger && !!selectedProductId
+    });
     const {data: products, status: productStatus} = useQuery('products', fetchProducts);
 
     async function fetchProducts() {
@@ -50,7 +50,7 @@ export const ThirdScriptStep = () => {
         return await ajax(`/api/products/${productId}/images`, 'get', jwt);
     }
 
-    if (productStatus === "loading") {
+    if (productStatus === "pending") {
         return <LoadingFetch/>;
     }
 
@@ -104,7 +104,7 @@ export const ThirdScriptStep = () => {
                     setFetchImagesTrigger(false);
                 }}
             >
-                {imageStatus === "loading" ?
+                {imageStatus === "pending" ?
                     <LoadingFetch/>
                     :
                     <Box width="90%" bgcolor={"background.default"} color={"text.primary"} p={3}

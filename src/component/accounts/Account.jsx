@@ -9,7 +9,6 @@ import {
     Button,
     Divider,
     IconButton,
-    ListItem,
     Modal,
     Snackbar,
     Stack,
@@ -19,7 +18,7 @@ import {
 import {Delete, Edit} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {useMutation, useQueryClient} from "react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ajax} from "../../util/fetchService";
 
 export const Account = React.memo(({account, change, setChange}) => {
@@ -33,30 +32,26 @@ export const Account = React.memo(({account, change, setChange}) => {
         name: ""
     });
 
-    const deleteMutation = useMutation(
-        (id) => ajax(`/api/accounts/${id}`, 'delete', jwt),
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries('accounts');
-                setChange(!change);
-            }
+    const deleteMutation = useMutation({
+        mutationFn: (id) => ajax(`/api/accounts/${id}`, 'delete', jwt),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['accounts'] });
+            setChange(!change);
         }
-    );
+    });
 
-    const editMutation = useMutation(
-        (data) => ajax(`/api/accounts`, 'put', jwt, data),
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries('accounts');
-                setChange(!change);
-                setOpenEditGame(false);
-                setGameToUpdate(prev => ({...prev, name: ""}));
-            },
-            onError: () => {
-                setOpenAlert(true);
-            }
+    const editMutation = useMutation({
+        mutationFn: (data) => ajax(`/api/accounts`, 'put', jwt, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['accounts'] });
+            setChange(!change);
+            setOpenEditGame(false);
+            setGameToUpdate(prev => ({ ...prev, name: "" }));
+        },
+        onError: () => {
+            setOpenAlert(true);
         }
-    );
+    });
 
     const handleDelete = useCallback(() => {
         deleteMutation.mutate(account.id);
@@ -74,20 +69,30 @@ export const Account = React.memo(({account, change, setChange}) => {
     return (
         <>
             <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                    <ListItem sx={{p: 0}}>
-                        <Typography sx={{flexGrow: 1}}>{account.name}</Typography>
-                        <IconButton onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenEditGame(true);
-                        }}><Edit/></IconButton>
-                        <IconButton onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenDeleteModal(true);
-                        }}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    component="div"
+                    sx={{
+                        '& .MuiAccordionSummary-content': {
+                            alignItems: 'center',
+                            margin: 0
+                        },
+                        cursor: 'pointer',
+                        '&:hover': {
+                            backgroundColor: 'action.hover',
+                        }
+                    }}
+                >
+                    <Typography sx={{ flexGrow: 1 }}>{account.name}</Typography>
+                    
+                    <Box sx={{ display: 'flex' }} onClick={(e) => e.stopPropagation()}>
+                        <IconButton onClick={() => setOpenEditGame(true)}>
+                            <Edit/>
+                        </IconButton>
+                        <IconButton onClick={() => setOpen(true)}>
                             <Delete color={"error"}/>
                         </IconButton>
-                    </ListItem>
+                    </Box>
                 </AccordionSummary>
                 <Divider/>
                 <AccordionDetails>

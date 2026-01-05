@@ -21,7 +21,7 @@ import {
 import {Add as AddIcon, Clear} from "@mui/icons-material"
 import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import {LoadingFetch} from "../LoadingFetch";
 
 const StyledModal = styled(Modal)({
@@ -45,8 +45,10 @@ export const AddProduct = () => {
         images: []
     });
 
-    const {data: categories, status: categoryStatus} = useQuery('categories', fetchCategories)
-
+    const { data: categories, status: categoryStatus } = useQuery({
+        queryKey: ['categories'],
+        queryFn: fetchCategories
+    });
     async function fetchCategories() {
         return await ajax('/api/categories', 'get', jwt);
     }
@@ -77,7 +79,7 @@ export const AddProduct = () => {
         return message;
     }
 
-    if (categoryStatus === "loading") {
+    if (categoryStatus === "pending") {
         return <LoadingFetch/>
     }
 

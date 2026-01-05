@@ -2,7 +2,7 @@ import React, {useCallback, useState} from "react";
 import {Box, List, Pagination, TextField} from "@mui/material";
 import {useLocalState} from "../../util/useLocalStorage";
 import {ajax} from "../../util/fetchService";
-import {useQuery} from "react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {LoadingFetch} from "../LoadingFetch";
 import {Account} from "./Account";
 import {useDebounce} from "../../util/useDebounce";
@@ -26,8 +26,10 @@ export const Accounts = () => {
         return await ajax(`/api/accounts/details` + addParam, 'get', jwt);
     }, [jwt, debouncedSearch]);
 
-    const {data, status} = useQuery(['accounts', debouncedSearch, change, page], fetchAccounts, {
-        keepPreviousData: true,
+    const { data, status } = useQuery({
+        queryKey: ['accounts', debouncedSearch, change, page],
+        queryFn: fetchAccounts,
+        placeholderData: keepPreviousData,
         staleTime: 5000
     });
 
@@ -42,7 +44,7 @@ export const Accounts = () => {
                        label={"Search"}
                        value={search}
                        onChange={handleSearchChange}/>
-            {status === "loading" ? <LoadingFetch/> :
+            {status === "pending" ? <LoadingFetch/> :
                 <Box p={2}>
                     <List sx={{height: "100%"}}>
                         {data?.accounts?.map((account) => (

@@ -12,7 +12,6 @@ import {
     ImageList,
     ImageListItem,
     ImageListItemBar,
-    ListItem,
     Modal,
     Snackbar,
     Stack,
@@ -23,7 +22,7 @@ import {Delete, Edit, ImageSearch} from "@mui/icons-material";
 import {useLocalState} from "../../util/useLocalStorage";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextField from "@mui/material/TextField";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {LoadingFetch} from "../LoadingFetch";
 import {ajax} from "../../util/fetchService";
 
@@ -42,11 +41,11 @@ export const Product = ({product, change, setChange}) => {
     const [open, setOpen] = useState(false)
     const [openImages, setOpenImages] = useState(false)
     const [fetchImagesTrigger, setFetchImagesTrigger] = useState(false);
-    const {data: images, status: imageStatus} = useQuery(
-        ['images', selectedProductId],
-        () => fetchImages(selectedProductId),
-        {enabled: fetchImagesTrigger}
-    );
+    const {data: images, status: imageStatus} = useQuery({
+        queryKey: ['images', selectedProductId],
+        queryFn: () => fetchImages(selectedProductId),
+        enabled: fetchImagesTrigger && !!selectedProductId
+    });
     const [gameToUpdate, setGameToUpdate] = React.useState({
         id: product.id,
         name: ""
@@ -92,25 +91,38 @@ export const Product = ({product, change, setChange}) => {
         <>
             <Accordion>
                 <AccordionSummary
-                    expandIcon={<ExpandMoreIcon/>}>
-                    <ListItem>
-                        <Typography sx={{width: "100%"}}>{product.name}</Typography>
+                    expandIcon={<ExpandMoreIcon/>}
+                    component="div"
+                    sx={{
+                        '& .MuiAccordionSummary-content': {
+                            alignItems: 'center',
+                            margin: 0
+                        },
+                        cursor: 'pointer',
+                        '&:hover': {
+                            backgroundColor: 'action.hover',
+                        }
+                    }}
+                >
+                    <Typography sx={{ flexGrow: 1 }}>{product.name}</Typography>
+                    
+                    <Box sx={{ display: 'flex' }} onClick={(e) => e.stopPropagation()}>
                         <IconButton
                             onClick={() => {
                                 setSelectedProductId(product.id);
                                 setFetchImagesTrigger(true);
                                 setOpenImages(true);
                             }}
-                        ><ImageSearch/>
+                        >
+                            <ImageSearch/>
                         </IconButton>
-                        <IconButton onClick={() => {
-                            setOpenEditProduct(true)
-                        }
-                        }><Edit/></IconButton>
+                        <IconButton onClick={() => setOpenEditProduct(true)}>
+                            <Edit/>
+                        </IconButton>
                         <IconButton onClick={() => setOpen(true)}>
                             <Delete color={"error"}/>
                         </IconButton>
-                    </ListItem>
+                    </Box>
                 </AccordionSummary>
                 <Divider/>
                 <AccordionDetails>
@@ -163,7 +175,7 @@ export const Product = ({product, change, setChange}) => {
                     <Stack direction={"row"}>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => setOpen(false)}>No</Button>
                         <Button variant="text" fullWidth type={"submit"} onClick={() => {
-                            queryClient.invalidateQueries('products')
+                            queryClient.invalidateQueries({queryKey: ['products']})
                             deleteProduct(product.id)
                             setOpen(false)
                         }}>Yes</Button>
@@ -177,7 +189,7 @@ export const Product = ({product, change, setChange}) => {
                     setFetchImagesTrigger(false);
                 }}
             >
-                {imageStatus === "loading" ?
+                {imageStatus === "pending" ?
                     <LoadingFetch/>
                     :
                     <Box width="90%" bgcolor={"background.default"} color={"text.primary"} p={3}
